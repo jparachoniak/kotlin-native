@@ -142,6 +142,7 @@ void setupClang(Project project) {
 
     project.convention.plugins.platformManager = project.rootProject.ext.platformManager
     project.convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
+    project.convention.plugins.execClangFormat = new org.jetbrains.kotlin.ExecClangFormat(project)
 
     project.plugins.withType(NativeComponentPlugin) {
         project.model {
@@ -775,4 +776,12 @@ task compdb(type: Copy) {
     dependsOn "${hostName}CompilationDatabase"
     from "$buildDir/${hostName}/compile_commands.json"
     into "$projectDir"
+}
+
+task format {
+    dependsOn ":runtime:format"
+}
+
+task formatCheck {
+    dependsOn ":runtime:formatCheck"
 }
