@@ -395,14 +395,28 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
                     require(it is KonanLibrary)
                     (!it.isDefault && !context.config.purgeUserLibs) || imports.nativeDependenciesAreUsed(it)
                 } as List<KonanLibrary>
+    }
 
+    private val immediateBitcodeDependencies: List<KonanLibrary> by lazy {
+        (context.config.resolvedLibraries.getFullList(TopologicalLibraryOrder) as List<KonanLibrary>)
+                .filter { (!it.isDefault && !context.config.purgeUserLibs) || imports.bitcodeIsUsed(it) }
+    }
+
+    private val transitiveBitcodeDependencies: List<KonanLibrary> by lazy {
+        val allLibraries = context.librariesWithDependencies.associateBy { it.uniqueName }
+        immediateBitcodeDependencies
+                .mapNotNull { context.config.cachedLibraries.getLibraryCache(it) }
+                .flatMap { it.bitcodeDependencies }
+                .map { allLibraries[it] ?: error("Bitcode dependency to an unknown library: $it") }
+            .distinct()
     }
 
     val allNativeDependencies: List<KonanLibrary> by lazy {
-        val cachedLibraries = context.librariesWithDependencies.filter {
-            context.config.cachedLibraries.isLibraryCached(it)
-        }
-        (nativeDependenciesToLink + cachedLibraries).distinct()
+        (nativeDependenciesToLink + transitiveBitcodeDependencies).distinct()
+    }
+
+    val allBitcodeDependencies: List<KonanLibrary> by lazy {
+        (immediateBitcodeDependencies + transitiveBitcodeDependencies).distinct()
     }
 
     val bitcodeToLink: List<KonanLibrary> by lazy {

@@ -21,6 +21,11 @@ class CachedLibraries(
 
     class Cache(val kind: Kind, val path: String) {
         enum class Kind { DYNAMIC, STATIC }
+
+        val bitcodeDependencies by lazy {
+            val directory = File(path).absoluteFile.parent
+            File(directory, BITCODE_DEPENDENCIES_FILE_NAME).readStrings()
+        }
     }
 
     private val allCaches: Map<KotlinLibrary, Cache> = allLibraries.mapNotNull { library ->
@@ -76,5 +81,6 @@ class CachedLibraries(
     companion object {
         fun getCachedLibraryName(library: KotlinLibrary): String = getCachedLibraryName(library.uniqueName)
         fun getCachedLibraryName(libraryName: String): String = "$libraryName-cache"
+        const val BITCODE_DEPENDENCIES_FILE_NAME = "bitcode_deps"
     }
 }

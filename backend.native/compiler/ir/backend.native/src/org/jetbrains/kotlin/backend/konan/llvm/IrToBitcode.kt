@@ -505,6 +505,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             if (context.llvm.fileInitializers.isEmpty() && !context.llvm.fileUsesThreadLocalObjects && context.llvm.globalSharedObjects.isEmpty())
                 return
 
+            context.llvmImports.add(declaration.packageFragmentDescriptor.llvmSymbolOrigin)
+
             // Create global initialization records.
             val initNode = createInitNode(createInitBody())
             context.llvm.irStaticInitializers.add(IrStaticInitializer(declaration, createInitCtor(initNode)))
@@ -2387,7 +2389,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
     fun appendStaticInitializers() {
         // Null for "current" non-library module:
-        val libraries = (context.librariesWithDependencies + listOf(null))
+        val libraries = (context.llvm.allBitcodeDependencies + listOf(null))
 
         val libraryToInitializers = libraries.associateWith {
             mutableListOf<LLVMValueRef>()
