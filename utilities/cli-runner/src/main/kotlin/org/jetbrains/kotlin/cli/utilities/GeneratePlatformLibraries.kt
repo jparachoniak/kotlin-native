@@ -268,7 +268,7 @@ private fun getCacheFile(
 ): File {
     val cacheBaseName = CachedLibraries.getCachedLibraryName(libraryName)
     val cacheOutputKind = CompilerOutputKind.valueOf(cacheKind.toUpperCase())
-    return OutputFiles(cacheDirectory.child(cacheBaseName).absolutePath, target, cacheOutputKind).mainFile.File()
+    return OutputFiles(cacheDirectory.child(cacheBaseName).child(cacheBaseName).absolutePath, target, cacheOutputKind).mainFile.File()
 }
 
 private fun buildCache(
