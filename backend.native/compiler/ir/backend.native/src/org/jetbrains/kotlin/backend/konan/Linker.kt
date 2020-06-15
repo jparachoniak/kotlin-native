@@ -77,8 +77,8 @@ internal class Linker(val context: Context) {
     private fun renameOutput() {
         if (context.config.produce.isCache) {
             val outputFiles = context.config.outputFiles
-            File(outputFiles.mainFile).delete()
-            if (!renameAtomic(outputFiles.tempCacheDirectory!!.absolutePath, outputFiles.mainFile, /* replaceExisting = */ false))
+            java.io.File(outputFiles.mainFile).delete()
+            if (!java.io.File(outputFiles.tempCacheDirectory!!.absolutePath).renameTo(java.io.File(outputFiles.mainFile)))
                 outputFiles.tempCacheDirectory!!.deleteRecursively()
         }
     }
@@ -176,26 +176,21 @@ private fun determineCachesToLink(context: Context): CachesToLink {
     val staticCaches = mutableListOf<String>()
     val dynamicCaches = mutableListOf<String>()
 
-    context.llvm.allBitcodeDependencies.forEach { library ->
+    context.llvm.allCacheBitcodeDependencies.forEach { library ->
         val currentBinaryContainsLibrary = context.llvmModuleSpecification.containsLibrary(library)
         val cache = context.config.cachedLibraries.getLibraryCache(library)
-        val libraryIsCached = cache != null
+                ?: error("Library $library is expected to be cached")
 
         // Consistency check. Generally guaranteed by implementation.
-        if (currentBinaryContainsLibrary && libraryIsCached) {
+        if (currentBinaryContainsLibrary)
             error("Library ${library.libraryName} is found in both cache and current binary")
-        } else if (!currentBinaryContainsLibrary && !libraryIsCached) {
-            error("Library ${library.libraryName} is not found neither in cache nor in current binary")
+
+        val list = when (cache.kind) {
+            CachedLibraries.Cache.Kind.DYNAMIC -> dynamicCaches
+            CachedLibraries.Cache.Kind.STATIC -> staticCaches
         }
 
-        if (cache != null) {
-            val list = when (cache.kind) {
-                CachedLibraries.Cache.Kind.DYNAMIC -> dynamicCaches
-                CachedLibraries.Cache.Kind.STATIC -> staticCaches
-            }
-
-            list += cache.path
-        }
+        list += cache.path
     }
     return CachesToLink(static = staticCaches, dynamic = dynamicCaches)
 }

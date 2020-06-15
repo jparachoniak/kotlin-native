@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.CachedLibraries
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
@@ -402,21 +403,36 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
                 .filter { (!it.isDefault && !context.config.purgeUserLibs) || imports.bitcodeIsUsed(it) }
     }
 
-    private val transitiveBitcodeDependencies: List<KonanLibrary> by lazy {
-        val allLibraries = context.librariesWithDependencies.associateBy { it.uniqueName }
-        immediateBitcodeDependencies
-                .mapNotNull { context.config.cachedLibraries.getLibraryCache(it) }
-                .flatMap { it.bitcodeDependencies }
-                .map { allLibraries[it] ?: error("Bitcode dependency to an unknown library: $it") }
-            .distinct()
+    val allCacheBitcodeDependencies: List<KonanLibrary> by lazy {
+        val allLibraries = context.config.resolvedLibraries.getFullList().associateBy { it.uniqueName }
+        val result = mutableSetOf<KonanLibrary>()
+
+        fun addDependencies(cachedLibrary: CachedLibraries.Cache) {
+            cachedLibrary.bitcodeDependencies.forEach {
+                val library = allLibraries[it] ?: error("Bitcode dependency to an unknown library: $it")
+                result.add(library as KonanLibrary)
+                addDependencies(context.config.cachedLibraries.getLibraryCache(library)
+                        ?: error("Library $it is expected to be cached"))
+            }
+        }
+
+        for (library in immediateBitcodeDependencies) {
+            val cache = context.config.cachedLibraries.getLibraryCache(library)
+            if (cache != null) {
+                result += library
+                addDependencies(cache)
+            }
+        }
+
+        result.toList()
     }
 
     val allNativeDependencies: List<KonanLibrary> by lazy {
-        (nativeDependenciesToLink + transitiveBitcodeDependencies).distinct()
+        (nativeDependenciesToLink + allCacheBitcodeDependencies).distinct()
     }
 
     val allBitcodeDependencies: List<KonanLibrary> by lazy {
-        (immediateBitcodeDependencies + transitiveBitcodeDependencies).distinct()
+        (immediateBitcodeDependencies + allCacheBitcodeDependencies).distinct()
     }
 
     val bitcodeToLink: List<KonanLibrary> by lazy {

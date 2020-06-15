@@ -505,8 +505,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             if (context.llvm.fileInitializers.isEmpty() && !context.llvm.fileUsesThreadLocalObjects && context.llvm.globalSharedObjects.isEmpty())
                 return
 
-            context.llvmImports.add(declaration.packageFragmentDescriptor.llvmSymbolOrigin)
-
             // Create global initialization records.
             val initNode = createInitNode(createInitBody())
             context.llvm.irStaticInitializers.add(IrStaticInitializer(declaration, createInitCtor(initNode)))
