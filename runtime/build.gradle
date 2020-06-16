@@ -115,7 +115,13 @@ def clangFormatTargets = project.fileTree("src/main") {
     include '**/*.m'
     include '**/*.mm'
 
-    exclude 'cpp/utf8.h' // part of external library
+    // These are external libraries
+    exclude 'cpp/dlmalloc/**'
+    exclude 'cpp/dtoa/**'
+    exclude 'cpp/math/**'
+    exclude 'cpp/snprintf/**'
+    exclude 'cpp/utf8.h'
+    exclude 'cpp/utf8/**'
 
     // TODO: Reformat all these files.
     exclude 'cpp/Alloc.h'
