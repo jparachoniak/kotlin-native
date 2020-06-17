@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin
 
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import org.gradle.api.GradleException
+import java.io.File
 import org.gradle.api.Project
 
 class ExecCLionFormat(private val project: Project) {
     fun exec(targets: Iterable<File>) {
         project.exec {
             it.executable = "open"
-            it.args = listOf("-na", "--args", "format") + targets.map { it.absolutePath }
+            it.args = listOf("-na", "CLion.app", "--args", "format" , "-s", File(project.rootProject.projectDir, "CLionFormat.xml").absolutePath) + targets.map { it.absolutePath }
         }
     }
 }

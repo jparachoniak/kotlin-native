@@ -19,31 +19,45 @@ open class CLionFormatCheckTask : DefaultTask() {
     @SkipWhenEmpty
     var files: Iterable<File> = ArrayList()
 
+    private val outputDir = File(project.buildDir, "clionFormat")
+    private val root = project.file(".")
+
+    override fun configure(closure: Closure<Any>): Task {
+        super.configure(closure)
+        for (file in files) {
+            val name = "copy_" + file.toRelativeString(root).replace('/', '_').replace('\\', '_')
+            val outputFile = File(outputDir, file.toRelativeString(root)).parentFile
+            (project.tasks.create(name, Copy::class.java) as Copy).into(outputFile).from(file)
+            dependsOn(name)
+        }
+        return this
+    }
+
     @TaskAction
     fun run() {
         val plugin = project.convention.getPlugin(ExecCLionFormat::class.java)
-        plugin.exec(files)
-        /*
-        fun check(target: String) {
-            val outputStream = ByteArrayOutputStream()
-            project.exec {
-                it.executable = executable()
-                it.args = listOf(target)
-                it.standardOutput = outputStream
-            }.assertNormalExitValue()
+
+        plugin.exec(files.map { File(outputDir, it.toRelativeString(root)) })
+
+        var failing = false
+        val failingDiff = ByteArrayOutputStream()
+        for (file in files) {
+            val outputFile = File(outputDir, file.toRelativeString(root))
             val diffOutputStream = ByteArrayOutputStream()
             val diffResult = project.exec {
-                it.commandLine = listOf("diff", "-u", target, "-")
-                it.standardInput = ByteArrayInputStream(outputStream.toByteArray())
+                it.commandLine = listOf("diff", "-u", file.absolutePath, outputFile.absolutePath)
                 it.standardOutput = diffOutputStream
                 it.isIgnoreExitValue = true
             }
-            if (diffResult.exitValue == 0) {
-                return
+            if (diffResult.exitValue != 0) {
+                failing = true
+                diffOutputStream.writeTo(failingDiff)
             }
-            throw GradleException("$target is not formatted:\n$diffOutputStream")
         }
-        */
+
+        if (failing) {
+            throw GradleException("Code is not formatted:\n$failingDiff")
+        }
     }
 }
 
