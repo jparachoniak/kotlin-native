@@ -123,6 +123,7 @@ def clionFormatTargets = project.fileTree("src/main") {
     exclude 'cpp/utf8.h'
     exclude 'cpp/utf8/**'
 
+/*
     // TODO: Reformat all these files.
     exclude 'cpp/Alloc.h'
     exclude 'cpp/Arrays.cpp'
@@ -188,6 +189,7 @@ def clionFormatTargets = project.fileTree("src/main") {
     exclude 'cpp/Weak.cpp'
     exclude 'cpp/Worker.cpp'
     exclude 'cpp/Worker.h'
+*/
 }
 
 task format(type: CLionFormatFixTask) {
