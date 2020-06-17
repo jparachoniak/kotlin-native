@@ -2,8 +2,8 @@
  * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-import org.jetbrains.kotlin.ClangFormatCheckTask
-import org.jetbrains.kotlin.ClangFormatFixTask
+import org.jetbrains.kotlin.CLionFormatCheckTask
+import org.jetbrains.kotlin.CLionFormatFixTask
 import org.jetbrains.kotlin.CompilationDatabaseKt
 import org.jetbrains.kotlin.CompileToBitcode
 import org.jetbrains.kotlin.UtilsKt
@@ -107,7 +107,7 @@ task generateJsMath {
     }
 }
 
-def clangFormatTargets = project.fileTree("src/main") {
+def clionFormatTargets = project.fileTree("src/main") {
     include '**/*.c'
     include '**/*.cpp'
     include '**/*.h'
@@ -190,10 +190,10 @@ def clangFormatTargets = project.fileTree("src/main") {
     exclude 'cpp/Worker.h'
 }
 
-task format(type: ClangFormatFixTask) {
-    files = clangFormatTargets
+task format(type: CLionFormatFixTask) {
+    files = clionFormatTargets
 }
 
-task formatCheck(type: ClangFormatCheckTask) {
-    files = clangFormatTargets
+task formatCheck(type: CLionFormatCheckTask) {
+    files = clionFormatTargets
 }
