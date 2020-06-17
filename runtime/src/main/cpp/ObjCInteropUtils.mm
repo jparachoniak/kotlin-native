@@ -144,32 +144,32 @@ void Konan_ObjCInterop_initWeakReference(KRef ref, id objcPtr) {
 extern "C" {
 
 void* Kotlin_Interop_CreateNSStringFromKString(const ArrayHeader* str) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  return nullptr;
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    return nullptr;
 }
 
 OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, void* str) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  RETURN_OBJ(nullptr);
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    RETURN_OBJ(nullptr);
 }
 
 void* Kotlin_Interop_createKotlinObjectHolder(KRef any) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  return nullptr;
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    return nullptr;
 }
 
 KRef Kotlin_Interop_unwrapKotlinObjectHolder(void* holder) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  return nullptr;
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    return nullptr;
 }
-  
+
 OBJ_GETTER(Konan_ObjCInterop_getWeakReference, KRef ref) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  RETURN_OBJ(nullptr);
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    RETURN_OBJ(nullptr);
 }
 
 void Konan_ObjCInterop_initWeakReference(KRef ref, void* objcPtr) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
+    RuntimeAssert(false, "Objective-C interop is disabled");
 }
 
 } // extern "C"

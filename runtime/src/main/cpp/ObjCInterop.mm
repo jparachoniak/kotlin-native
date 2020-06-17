@@ -325,31 +325,31 @@ Class Kotlin_objc_lookUpClass(const char* name) {
 extern "C" {
 
 void* Kotlin_objc_autoreleasePoolPush() {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  return nullptr;
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    return nullptr;
 }
 
 void Kotlin_objc_autoreleasePoolPop(void* ptr) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
+    RuntimeAssert(false, "Objective-C interop is disabled");
 }
 
 void* Kotlin_objc_allocWithZone(void* clazz) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  return nullptr;
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    return nullptr;
 }
 
 void* Kotlin_objc_retain(void* ptr) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  return nullptr;
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    return nullptr;
 }
 
 void Kotlin_objc_release(void* ptr) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
+    RuntimeAssert(false, "Objective-C interop is disabled");
 }
 
 void* Kotlin_objc_lookUpClass(const char* name) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  return nullptr;
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    return nullptr;
 }
 
 } // extern "C"

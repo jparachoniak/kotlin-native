@@ -327,7 +327,7 @@ extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t 
 #else
 
 extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize) {
-  return false;
+    return false;
 }
 
 #endif // USE_ELF_SYMBOLS

@@ -11,53 +11,53 @@
 #include "Memory.h"
 
 class KRefSharedHolder {
- public:
-  void initLocal(ObjHeader* obj);
+public:
+    void initLocal(ObjHeader* obj);
 
-  void init(ObjHeader* obj);
+    void init(ObjHeader* obj);
 
-  ObjHeader* ref() const;
-  ObjHeader* refOrNull() const;
+    ObjHeader* ref() const;
+    ObjHeader* refOrNull() const;
 
-  void dispose() const;
+    void dispose() const;
 
-  OBJ_GETTER0(describe) const;
+    OBJ_GETTER0(describe) const;
 
- private:
-  ObjHeader* obj_;
-  ForeignRefContext context_;
+private:
+    ObjHeader* obj_;
+    ForeignRefContext context_;
 
-  bool isRefAccessible() const;
+    bool isRefAccessible() const;
 };
 
 static_assert(std::is_trivially_destructible<KRefSharedHolder>::value,
-    "KRefSharedHolder destructor is not guaranteed to be called.");
+              "KRefSharedHolder destructor is not guaranteed to be called.");
 
 class BackRefFromAssociatedObject {
- public:
-  void initAndAddRef(ObjHeader* obj);
+public:
+    void initAndAddRef(ObjHeader* obj);
 
-  void addRef();
+    void addRef();
 
-  bool tryAddRef();
+    bool tryAddRef();
 
-  void releaseRef();
+    void releaseRef();
 
-  ObjHeader* ref() const;
+    ObjHeader* ref() const;
 
-  inline bool permanent() const {
-    return obj_->permanent(); // Safe to query from any thread.
-  }
+    inline bool permanent() const {
+        return obj_->permanent(); // Safe to query from any thread.
+    }
 
- private:
-  ObjHeader* obj_;
-  ForeignRefContext context_;
-  volatile int refCount;
+private:
+    ObjHeader* obj_;
+    ForeignRefContext context_;
+    volatile int refCount;
 
-  void ensureRefAccessible() const;
+    void ensureRefAccessible() const;
 };
 
 static_assert(std::is_trivially_destructible<BackRefFromAssociatedObject>::value,
-    "BackRefFromAssociatedObject destructor is not guaranteed to be called.");
+              "BackRefFromAssociatedObject destructor is not guaranteed to be called.");
 
 #endif // RUNTIME_MEMORYSHAREDREFS_HPP

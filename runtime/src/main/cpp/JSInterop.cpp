@@ -27,34 +27,34 @@ extern "C" {
 
 // These functions are implemented in JS file for WASM and are not available on other platforms.
 RUNTIME_NORETURN Arena Konan_js_allocateArena() {
-  RuntimeAssert(false, "JavaScript interop is disabled");
-  konan::abort();
+    RuntimeAssert(false, "JavaScript interop is disabled");
+    konan::abort();
 }
 
 RUNTIME_NORETURN void Konan_js_freeArena(Arena arena) {
-  RuntimeAssert(false, "JavaScript interop is disabled");
-  konan::abort();
+    RuntimeAssert(false, "JavaScript interop is disabled");
+    konan::abort();
 }
 
 RUNTIME_NORETURN void Konan_js_pushIntToArena(Arena arena, KInt value) {
-  RuntimeAssert(false, "JavaScript interop is disabled");
-  konan::abort();
+    RuntimeAssert(false, "JavaScript interop is disabled");
+    konan::abort();
 }
 
 RUNTIME_NORETURN KInt Konan_js_getInt(Arena arena,
                                       Object obj,
                                       Pointer propertyPtr,
                                       KInt propertyLen) {
-  RuntimeAssert(false, "JavaScript interop is disabled");
-  konan::abort();
+    RuntimeAssert(false, "JavaScript interop is disabled");
+    konan::abort();
 }
 
 RUNTIME_NORETURN KInt Konan_js_getProperty(Arena arena,
                                            Object obj,
                                            Pointer propertyPtr,
                                            KInt propertyLen) {
-  RuntimeAssert(false, "JavaScript interop is disabled");
-  konan::abort();
+    RuntimeAssert(false, "JavaScript interop is disabled");
+    konan::abort();
 }
 
 RUNTIME_NORETURN void Konan_js_setFunction(Arena arena,
@@ -62,8 +62,8 @@ RUNTIME_NORETURN void Konan_js_setFunction(Arena arena,
                                            Pointer propertyName,
                                            KInt propertyLength,
                                            KInt function) {
-  RuntimeAssert(false, "JavaScript interop is disabled");
-  konan::abort();
+    RuntimeAssert(false, "JavaScript interop is disabled");
+    konan::abort();
 }
 
 RUNTIME_NORETURN void Konan_js_setString(Arena arena,
@@ -72,8 +72,8 @@ RUNTIME_NORETURN void Konan_js_setString(Arena arena,
                                          KInt propertyLength,
                                          Pointer stringPtr,
                                          KInt stringLength) {
-  RuntimeAssert(false, "JavaScript interop is disabled");
-  konan::abort();
+    RuntimeAssert(false, "JavaScript interop is disabled");
+    konan::abort();
 }
 
 }; // extern "C"

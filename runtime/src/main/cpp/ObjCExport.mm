@@ -1074,13 +1074,13 @@ extern "C" void Kotlin_ObjCExport_AbstractMethodCalled(id self, SEL selector) {
 #else
 
 extern "C" ALWAYS_INLINE void* Kotlin_Interop_refToObjC(ObjHeader* obj) {
-  RuntimeAssert(false, "Unavailable operation");
-  return nullptr;
+    RuntimeAssert(false, "Unavailable operation");
+    return nullptr;
 }
 
 extern "C" ALWAYS_INLINE OBJ_GETTER(Kotlin_Interop_refFromObjC, void* obj) {
-  RuntimeAssert(false, "Unavailable operation");
-  RETURN_OBJ(nullptr);
+    RuntimeAssert(false, "Unavailable operation");
+    RETURN_OBJ(nullptr);
 }
 
 #endif // KONAN_OBJC_INTEROP

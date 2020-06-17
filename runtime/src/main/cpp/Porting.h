@@ -38,12 +38,12 @@ RUNTIME_NORETURN void abort(void);
 RUNTIME_NORETURN void exit(int32_t status);
 
 // Thread control.
-void onThreadExit(void (*destructor)(void*), void* destructorParameter);
+void onThreadExit(void (* destructor)(void*), void* destructorParameter);
 
 // String/byte operations.
 // memcpy/memmove/memcmp are not here intentionally, as frequently implemented/optimized
 // by C compiler.
-void* memmem(const void *big, size_t bigLen, const void *little, size_t littleLen);
+void* memmem(const void* big, size_t bigLen, const void* little, size_t littleLen);
 int snprintf(char* buffer, size_t size, const char* format, ...);
 size_t strnlen(const char* buffer, size_t maxSize);
 

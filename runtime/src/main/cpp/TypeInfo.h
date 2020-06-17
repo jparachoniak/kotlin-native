@@ -40,48 +40,48 @@ struct MethodTableRecord {
 // Type for runtime representation of Konan object.
 // Keep in sync with runtimeTypeMap in RTTIGenerator.
 enum Konan_RuntimeType {
-  RT_INVALID    = 0,
-  RT_OBJECT     = 1,
-  RT_INT8       = 2,
-  RT_INT16      = 3,
-  RT_INT32      = 4,
-  RT_INT64      = 5,
-  RT_FLOAT32    = 6,
-  RT_FLOAT64    = 7,
-  RT_NATIVE_PTR = 8,
-  RT_BOOLEAN    = 9,
-  RT_VECTOR128  = 10
+    RT_INVALID = 0,
+    RT_OBJECT = 1,
+    RT_INT8 = 2,
+    RT_INT16 = 3,
+    RT_INT32 = 4,
+    RT_INT64 = 5,
+    RT_FLOAT32 = 6,
+    RT_FLOAT64 = 7,
+    RT_NATIVE_PTR = 8,
+    RT_BOOLEAN = 9,
+    RT_VECTOR128 = 10
 };
 
 // Flags per type.
 enum Konan_TypeFlags {
-  TF_IMMUTABLE = 1 << 0,
-  TF_ACYCLIC   = 1 << 1,
-  TF_INTERFACE = 1 << 2,
-  TF_OBJC_DYNAMIC = 1 << 3,
-  TF_LEAK_DETECTOR_CANDIDATE = 1 << 4
+    TF_IMMUTABLE = 1 << 0,
+    TF_ACYCLIC = 1 << 1,
+    TF_INTERFACE = 1 << 2,
+    TF_OBJC_DYNAMIC = 1 << 3,
+    TF_LEAK_DETECTOR_CANDIDATE = 1 << 4
 };
 
 // Flags per object instance.
 enum Konan_MetaFlags {
-  // If freeze attempt happens on such an object - throw an exception.
-  MF_NEVER_FROZEN = 1 << 0,
+    // If freeze attempt happens on such an object - throw an exception.
+    MF_NEVER_FROZEN = 1 << 0,
 };
 
 // Extended information about a type.
 struct ExtendedTypeInfo {
-  // Number of fields (negated Konan_RuntimeType for array types).
-  int32_t fieldsCount_;
-  // Offsets of all fields.
-  const int32_t* fieldOffsets_;
-  // Types of all fields.
-  const uint8_t* fieldTypes_;
-  // Names of all fields.
-  const char** fieldNames_;
-  // Number of supported debug operations.
-  int32_t debugOperationsCount_;
-  // Table of supported debug operations functions.
-  void** debugOperations_;
+    // Number of fields (negated Konan_RuntimeType for array types).
+    int32_t fieldsCount_;
+    // Offsets of all fields.
+    const int32_t* fieldOffsets_;
+    // Types of all fields.
+    const uint8_t* fieldTypes_;
+    // Names of all fields.
+    const char** fieldNames_;
+    // Number of supported debug operations.
+    int32_t debugOperationsCount_;
+    // Table of supported debug operations functions.
+    void** debugOperations_;
 };
 
 typedef void const* VTableElement;

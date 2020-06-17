@@ -23,40 +23,40 @@
 namespace {
 
 struct AtomicReferenceLayout {
-  ObjHeader header;
-  KRef value_;
-  KInt lock_;
-  KInt cookie_;
+    ObjHeader header;
+    KRef value_;
+    KInt lock_;
+    KInt cookie_;
 };
 
-template<typename T> struct AtomicPrimitive {
-  ObjHeader header;
-  volatile T value_;
+template <typename T> struct AtomicPrimitive {
+    ObjHeader header;
+    volatile T value_;
 };
 
 template <typename T> inline volatile T* getValueLocation(KRef thiz) {
-  AtomicPrimitive<T>* atomic = reinterpret_cast<AtomicPrimitive<T>*>(thiz);
-  return &atomic->value_;
+    AtomicPrimitive<T>* atomic = reinterpret_cast<AtomicPrimitive<T>*>(thiz);
+    return &atomic->value_;
 }
 
 template <typename T> void setImpl(KRef thiz, T value) {
-  volatile T* location = getValueLocation<T>(thiz);
-  atomicSet(location, value);
+    volatile T* location = getValueLocation<T>(thiz);
+    atomicSet(location, value);
 }
 
 template <typename T> T getImpl(KRef thiz) {
-  volatile T* location = getValueLocation<T>(thiz);
-  return atomicGet(location);
+    volatile T* location = getValueLocation<T>(thiz);
+    return atomicGet(location);
 }
 
 template <typename T> T addAndGetImpl(KRef thiz, T delta) {
-  volatile T* location = getValueLocation<T>(thiz);
-  return atomicAdd(location, delta);
+    volatile T* location = getValueLocation<T>(thiz);
+    return atomicAdd(location, delta);
 }
 
 template <typename T> T compareAndSwapImpl(KRef thiz, T expectedValue, T newValue) {
-  volatile T* location = getValueLocation<T>(thiz);
-  return compareAndSwap(location, expectedValue, newValue);
+    volatile T* location = getValueLocation<T>(thiz);
+    return compareAndSwap(location, expectedValue, newValue);
 }
 
 template <typename T> KBoolean compareAndSetImpl(KRef thiz, T expectedValue, T newValue) {
@@ -186,7 +186,7 @@ OBJ_GETTER(Kotlin_AtomicReference_compareAndSwap, KRef thiz, KRef expectedValue,
     // See Kotlin_AtomicReference_get() for explanations, why locking is needed.
     AtomicReferenceLayout* ref = asAtomicReference(thiz);
     RETURN_RESULT_OF(SwapHeapRefLocked, &ref->value_, expectedValue, newValue,
-        &ref->lock_, &ref->cookie_);
+                     &ref->lock_, &ref->cookie_);
 }
 
 KBoolean Kotlin_AtomicReference_compareAndSet(KRef thiz, KRef expectedValue, KRef newValue) {
@@ -195,7 +195,7 @@ KBoolean Kotlin_AtomicReference_compareAndSet(KRef thiz, KRef expectedValue, KRe
     AtomicReferenceLayout* ref = asAtomicReference(thiz);
     ObjHolder holder;
     auto old = SwapHeapRefLocked(&ref->value_, expectedValue, newValue,
-        &ref->lock_, &ref->cookie_, holder.slot());
+                                 &ref->lock_, &ref->cookie_, holder.slot());
     return old == expectedValue;
 }
 

@@ -179,91 +179,91 @@ extern "C" OBJ_GETTER(Kotlin_NSDictionaryAsKMap_valueIterator, KRef thiz) {
 #else  // KONAN_OBJC_INTEROP
 
 extern "C" KInt Kotlin_NSArrayAsKList_getSize(KRef obj) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  return -1;
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    return -1;
 }
 
 extern "C" OBJ_GETTER(Kotlin_NSArrayAsKList_get, KRef obj, KInt index) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  RETURN_OBJ(nullptr);
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    RETURN_OBJ(nullptr);
 }
 
 extern "C" void Kotlin_NSMutableArrayAsKMutableList_add(KRef thiz, KInt index, KRef element) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
+    RuntimeAssert(false, "Objective-C interop is disabled");
 }
 
 extern "C" OBJ_GETTER(Kotlin_NSMutableArrayAsKMutableList_removeAt, KRef thiz, KInt index) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  RETURN_OBJ(nullptr);
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    RETURN_OBJ(nullptr);
 }
 
 extern "C" OBJ_GETTER(Kotlin_NSMutableArrayAsKMutableList_set, KRef thiz, KInt index, KRef element) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  RETURN_OBJ(nullptr);
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    RETURN_OBJ(nullptr);
 }
 
 extern "C" void Kotlin_NSEnumeratorAsKIterator_computeNext(KRef thiz) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
+    RuntimeAssert(false, "Objective-C interop is disabled");
 }
 
 extern "C" KInt Kotlin_NSSetAsKSet_getSize(KRef thiz) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  return -1;
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    return -1;
 }
 
 extern "C" KBoolean Kotlin_NSSetAsKSet_contains(KRef thiz, KRef element) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  return false;
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    return false;
 }
 
 extern "C" OBJ_GETTER(Kotlin_NSSetAsKSet_getElement, KRef thiz, KRef element) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  RETURN_OBJ(nullptr);
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    RETURN_OBJ(nullptr);
 }
 
 extern "C" OBJ_GETTER(Kotlin_NSSetAsKSet_iterator, KRef thiz) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  RETURN_OBJ(nullptr);
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    RETURN_OBJ(nullptr);
 }
 
 extern "C" KInt Kotlin_NSDictionaryAsKMap_getSize(KRef thiz) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  return -1;
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    return -1;
 }
 
 extern "C" KBoolean Kotlin_NSDictionaryAsKMap_containsKey(KRef thiz, KRef key) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  return false;
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    return false;
 }
 
 extern "C" KBoolean Kotlin_NSDictionaryAsKMap_containsValue(KRef thiz, KRef value) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  return false;
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    return false;
 }
 
 extern "C" OBJ_GETTER(Kotlin_NSDictionaryAsKMap_get, KRef thiz, KRef key) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  RETURN_OBJ(nullptr);
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    RETURN_OBJ(nullptr);
 }
 
 extern "C" OBJ_GETTER(Kotlin_NSDictionaryAsKMap_getOrThrowConcurrentModification, KRef thiz, KRef key) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  RETURN_OBJ(nullptr);
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    RETURN_OBJ(nullptr);
 }
 
 extern "C" KBoolean Kotlin_NSDictionaryAsKMap_containsEntry(KRef thiz, KRef key, KRef value) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  return false;
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    return false;
 }
 
 extern "C" OBJ_GETTER(Kotlin_NSDictionaryAsKMap_keyIterator, KRef thiz) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  RETURN_OBJ(nullptr);
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    RETURN_OBJ(nullptr);
 }
 
 extern "C" OBJ_GETTER(Kotlin_NSDictionaryAsKMap_valueIterator, KRef thiz) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  RETURN_OBJ(nullptr);
+    RuntimeAssert(false, "Objective-C interop is disabled");
+    RETURN_OBJ(nullptr);
 }
 
 #endif // KONAN_OBJC_INTEROP
