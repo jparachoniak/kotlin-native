@@ -138,7 +138,7 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
 
     private val functionById = mutableMapOf<DeclarationID, FunctionDecl>()
 
-    override val functions: Collection<FunctionDecl>
+    override val functions: MutableCollection<FunctionDecl>
         get() = functionById.values
 
     override val macroConstants = mutableListOf<ConstantDef>()
@@ -150,6 +150,7 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
         get() = globalById.values
 
     override lateinit var includedHeaders: List<HeaderId>
+
 
     private fun log(message: String) {
         if (verbose) {
@@ -992,6 +993,8 @@ fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean): IndexerResul
     val compilation = indexDeclarations(result)
     return IndexerResult(result, compilation)
 }
+
+
 
 private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH {
     withIndex { index ->

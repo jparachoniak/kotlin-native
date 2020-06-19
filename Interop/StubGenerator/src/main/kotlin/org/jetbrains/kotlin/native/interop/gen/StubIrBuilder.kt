@@ -289,6 +289,7 @@ class StubIrBuilder(private val context: StubIrContext) {
 
     private fun addStubs(stubs: List<StubIrElement>) = stubs.forEach(this::addStub)
 
+    val myFunc = FunctionDecl(name="FOOBAR", parameters=listOf(),returnType = VoidType,binaryName = "FOOBARbinary", isDefined = false, isVararg = false)
     private fun addStub(stub: StubIrElement) {
         when(stub) {
             is ClassStub -> classes += stub
@@ -309,6 +310,13 @@ class StubIrBuilder(private val context: StubIrContext) {
     private val buildingContext = StubsBuildingContextImpl(context)
 
     fun build(): StubIrBuilderResult {
+        println("FUNCTIONS")
+        for (func in nativeIndex.functions) {
+            println(func.name)
+            println(func.parameters)
+            println(func.returnType)
+        }
+        generateStubsForFunction(myFunc)
         nativeIndex.objCProtocols.filter { !it.isForwardDeclaration }.forEach { generateStubsForObjCProtocol(it) }
         nativeIndex.objCClasses.filter { !it.isForwardDeclaration && !it.isNSStringSubclass()} .forEach { generateStubsForObjCClass(it) }
         nativeIndex.objCCategories.filter { !it.clazz.isNSStringSubclass() }.forEach { generateStubsForObjCCategory(it) }

@@ -100,7 +100,7 @@ abstract class NativeIndex {
     abstract val objCProtocols: Collection<ObjCProtocol>
     abstract val objCCategories: Collection<ObjCCategory>
     abstract val typedefs: Collection<TypedefDef>
-    abstract val functions: Collection<FunctionDecl>
+    abstract val functions: MutableCollection<FunctionDecl>
     abstract val macroConstants: Collection<ConstantDef>
     abstract val wrappedMacros: Collection<WrappedMacroDef>
     abstract val globals: Collection<GlobalDecl>
