@@ -261,15 +261,9 @@ private fun processCLib(flavorName: String, cinteropArguments: CInteropArguments
 
     val imports = parseImports(allLibraryDependencies)
 
+    val library = buildNativeLibrary(tool, def, cinteropArguments, imports)
 
-
-    //val library = buildNativeLibrary(tool, def, cinteropArguments, imports)
-    val (nativeIndex, compilation) = buildNativeIndex(buildNativeLibrary(tool, def, cinteropArguments, imports), verbose)
-
-
-
-
-
+    val (nativeIndex, compilation) = buildNativeIndex(library, verbose)
 
     // Our current approach to arm64_32 support is to compile armv7k version of bitcode
     // for arm64_32. That's the reason for this substitution.
