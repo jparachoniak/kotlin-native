@@ -45,9 +45,15 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
    */
   fun buildClass(): ObjCClass {
     val methods = (methodDescriptors zip parameterNames).map { buildClassMethod(it.first.first, it.first.second, it.first.third, it.second)}
+    val packageClassName = className.split('/').reduce{ acc, string -> acc.capitalize() + string}
 
+    println("====")
+    println(className)
+    println(methodDescriptors)
+    println(parameterNames)
+    println("====")
     val generatedClass = ObjCClassImpl(
-      name = className,
+      name = packageClassName,
       isForwardDeclaration = false,
       binaryName = null,
       location = Location(HeaderId("")) // Leaving headerId empty for now
@@ -71,6 +77,7 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
    * @param paramNames List of parameter names of this method taken from MethodBuilder
    */
   private fun buildClassMethod(methodName: String, methodDesc: String, access: Int, paramNames: List<String>): ObjCMethod {
+    buildJ2objcMethodName(methodName, methodDesc)
     if (methodName == "<init>") {
       return ObjCMethod(
         selector = "init",
@@ -85,12 +92,11 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
         isInit = true,
         isExplicitlyDesignatedInitializer = false)
     } else {
-      val selector = StringBuilder(methodName)
+      val selector = StringBuilder(buildJ2objcMethodName(methodName, methodDesc))
       val methodParameters = parseMethodParameters(methodDesc, paramNames)
       val methodReturnType = parseMethodReturnType(methodDesc)
-      if (methodParameters.size >= 1) methodParameters.subList(1,methodParameters.size).forEach { selector.append(":" + it.name) }
       return ObjCMethod(
-        selector = if (methodParameters.size > 1) "$selector:" else if (methodParameters.size == 1) "$methodName:" else methodName,
+        selector = selector.toString(),
         encoding = "[]", //TODO: Implement encoding properly
         parameters = methodParameters,
         returnType = methodReturnType,
@@ -100,9 +106,27 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
         nsReturnsRetained = false,
         isOptional = false,
         isInit = false,
-        isExplicitlyDesignatedInitializer = false)
+        isExplicitlyDesignatedInitializer = false,
+        j2objcNameOverride = true)
     }
   }
+
+  private fun buildJ2objcMethodName(methodName: String, methodDesc: String): String {
+    val outputMethodName = StringBuilder(methodName)
+
+    val types = getArgumentTypes(methodDesc)
+    if (types.size > 0) {
+      outputMethodName.append("With" + types.get(0).className.capitalize() + ":")
+    }
+    if (types.size > 1) {
+      for (i in 1 until types.size) {
+        outputMethodName.append("with" + types.get(i).className.capitalize() + ":")
+      }
+    }
+
+    return outputMethodName.toString()
+  }
+
 
   /**
    * Parses an ASM method's parameters and returns a list of Kotlin parameters
