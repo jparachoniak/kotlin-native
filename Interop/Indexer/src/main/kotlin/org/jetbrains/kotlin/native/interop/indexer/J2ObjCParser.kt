@@ -14,6 +14,7 @@ import java.util.jar.JarFile
 class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
 
   var className:String = ""
+  var superName:String = ""
   val methodDescriptors = mutableListOf<Triple<String, String, Int>>()
   val parameterNames = mutableListOf<List<String>>()
 
@@ -21,9 +22,12 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
                      access: Int,
                      name: String,
                      signature: String?,
-                     superName: String?,
+                     superName: String,
                      interfaces: Array<out String>?) {
     className = name
+    this.superName = superName
+    println(name)
+    println(superName)
     super.visit(version, access, name, signature, superName, interfaces)
   }
 
@@ -53,12 +57,23 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
       location = Location(HeaderId("")) // Leaving headerId empty for now
     )
     generatedClass.methods.addAll(methods)
-    generatedClass.baseClass = ObjCClassImpl(
-      name = "NSObject",
-      binaryName = null,
-      isForwardDeclaration = false,
-      location = Location(headerId = HeaderId("usr/include/objc/NSObject.h")) // TODO: When implementing inheritance check for proper base class
-    )
+    if (superName == "java/lang/Object") {
+      generatedClass.baseClass = ObjCClassImpl(
+        name = "NSObject",
+        binaryName = null,
+        isForwardDeclaration = false,
+        location = Location(headerId = HeaderId("usr/include/objc/NSObject.h")) // TODO: When implementing inheritance check for proper base class
+      )
+    }
+    else {
+      generatedClass.baseClass = ObjCClassImpl(
+        name = superName,
+        binaryName = null,
+        isForwardDeclaration = false,
+        location = Location(headerId = HeaderId(""))
+      )
+    }
+
     return generatedClass
   }
 
