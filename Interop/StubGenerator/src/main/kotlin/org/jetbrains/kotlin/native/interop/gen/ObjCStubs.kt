@@ -106,7 +106,7 @@ private class ObjCMethodStubBuilder(
     private val kotlinMethodParameters: List<FunctionParameterStub>
     private val external: Boolean
     private val receiver: ReceiverParameterStub?
-    private val name: String = if (method.j2objcNameOverride) method.j2objcName else method.kotlinName
+    private val name: String = method.nameOverride ?: method.kotlinName
     private val origin = StubOrigin.ObjCMethod(method, container)
     private val modality: MemberStubModality
     private val isOverride: Boolean =
@@ -253,11 +253,6 @@ internal val ObjCMethod.kotlinName: String
         } else {
             candidate
         }
-    }
-
-internal val ObjCMethod.j2objcName: String
-    get() {
-        return selector.split("With").first()
     }
 
 internal val ObjCClassOrProtocol.protocolsWithSupers: Sequence<ObjCProtocol>

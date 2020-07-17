@@ -227,7 +227,7 @@ data class ObjCMethod(
         val selector: String, val encoding: String, val parameters: List<Parameter>, private val returnType: Type,
         val isVariadic: Boolean, val isClass: Boolean, val nsConsumesSelf: Boolean, val nsReturnsRetained: Boolean,
         val isOptional: Boolean, val isInit: Boolean, val isExplicitlyDesignatedInitializer: Boolean,
-        val j2objcNameOverride: Boolean = false
+        val nameOverride: String? = null
 ) {
 
     fun returnsInstancetype(): Boolean = returnType is ObjCInstanceType

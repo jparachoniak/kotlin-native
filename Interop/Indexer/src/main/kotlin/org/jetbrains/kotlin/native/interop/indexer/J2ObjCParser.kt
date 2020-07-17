@@ -45,7 +45,7 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
    */
   fun buildClass(): ObjCClass {
     val methods = (methodDescriptors zip parameterNames).map { buildClassMethod(it.first.first, it.first.second, it.first.third, it.second)}
-    val packageClassName = className.split('/').reduce{ acc, string -> acc.capitalize() + string}
+    val packageClassName = buildJ2objcClassName()
 
     val generatedClass = ObjCClassImpl(
       name = packageClassName,
@@ -58,7 +58,7 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
       name = "NSObject",
       binaryName = null,
       isForwardDeclaration = false,
-      location = Location(headerId = HeaderId("usr/include/objc/NSObject.h"))
+      location = Location(headerId = HeaderId("usr/include/objc/NSObject.h")) // TODO: When implementing inheritance check for proper base class
     )
     return generatedClass
   }
@@ -101,7 +101,7 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
         isOptional = false,
         isInit = false,
         isExplicitlyDesignatedInitializer = false,
-        j2objcNameOverride = true)
+        nameOverride = selector.split("With").first())
     }
   }
 
@@ -112,15 +112,18 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
     if (types.size > 0) {
       outputMethodName.append("With" + types.get(0).className.capitalize() + ":")
     }
-    if (types.size > 1) {
-      for (i in 1 until types.size) {
-        outputMethodName.append("with" + types.get(i).className.capitalize() + ":")
-      }
+
+    for (i in 1 until types.size) {
+      outputMethodName.append("with" + types.get(i).className.capitalize() + ":")
     }
+
 
     return outputMethodName.toString()
   }
 
+  private fun buildJ2objcClassName(): String {
+    return className.split('/').reduce{ acc, string -> acc.capitalize() + string}
+  }
 
   /**
    * Parses an ASM method's parameters and returns a list of Kotlin parameters
