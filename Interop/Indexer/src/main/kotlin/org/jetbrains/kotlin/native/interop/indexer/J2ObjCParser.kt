@@ -47,11 +47,6 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
     val methods = (methodDescriptors zip parameterNames).map { buildClassMethod(it.first.first, it.first.second, it.first.third, it.second)}
     val packageClassName = className.split('/').reduce{ acc, string -> acc.capitalize() + string}
 
-    println("====")
-    println(className)
-    println(methodDescriptors)
-    println(parameterNames)
-    println("====")
     val generatedClass = ObjCClassImpl(
       name = packageClassName,
       isForwardDeclaration = false,
@@ -63,7 +58,7 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
       name = "NSObject",
       binaryName = null,
       isForwardDeclaration = false,
-      location = Location(headerId = HeaderId("usr/include/objc/NSObject.h")) // TODO: When implementing inheritance check for proper base class
+      location = Location(headerId = HeaderId("usr/include/objc/NSObject.h"))
     )
     return generatedClass
   }
@@ -92,11 +87,11 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
         isInit = true,
         isExplicitlyDesignatedInitializer = false)
     } else {
-      val selector = StringBuilder(buildJ2objcMethodName(methodName, methodDesc))
+      val selector = buildJ2objcMethodName(methodName, methodDesc)
       val methodParameters = parseMethodParameters(methodDesc, paramNames)
       val methodReturnType = parseMethodReturnType(methodDesc)
       return ObjCMethod(
-        selector = selector.toString(),
+        selector = selector,
         encoding = "[]", //TODO: Implement encoding properly
         parameters = methodParameters,
         returnType = methodReturnType,
