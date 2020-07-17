@@ -72,7 +72,6 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
    * @param paramNames List of parameter names of this method taken from MethodBuilder
    */
   private fun buildClassMethod(methodName: String, methodDesc: String, access: Int, paramNames: List<String>): ObjCMethod {
-    buildJ2objcMethodName(methodName, methodDesc)
     if (methodName == "<init>") {
       return ObjCMethod(
         selector = "init",
