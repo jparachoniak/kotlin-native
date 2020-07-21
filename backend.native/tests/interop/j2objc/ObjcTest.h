@@ -12,7 +12,5 @@
 @end
 
 @interface ExtendsFoo: Foo
-- (instancetype)init;
-
 - (int)add3:(int)x secondparam:(int)y thirdparam:(int)z;
 @end
