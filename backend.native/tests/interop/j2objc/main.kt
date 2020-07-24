@@ -13,5 +13,9 @@ private fun testMethods() {
   assertEquals(43, myObject.returnNum(43))
   assertEquals(47, myObject.add2(16,31))
 
+  assertEquals(10, myObject.myInt)
+  myObject.myInt = 20
+  assertEquals(20, myObject.myInt)
+
   assertEquals(100, j2objctest.Foo.return100Static())
 }

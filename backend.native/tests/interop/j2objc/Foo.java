@@ -1,4 +1,9 @@
 public class Foo {
+    public int myInt = 10;
+
+    public void setMyInt(int x) { myInt = x;}
+    public int getMyInt() { return myInt; }
+
     public int add2(int firstparam, int secondparam) {
         return firstparam + secondparam;
     }

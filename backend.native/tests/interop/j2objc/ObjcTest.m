@@ -3,6 +3,7 @@
 @implementation Foo
 
 - (instancetype)init {
+  _myInt = 10;
   return self;
 }
 
@@ -20,5 +21,13 @@
 
 + (int)return100Static {
     return 100;
+}
+
+- (int)getMyInt {
+    return _myInt;
+}
+
+- (void)setMyInt:(int)x {
+    _myInt = x;
 }
 @end

@@ -2,7 +2,9 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Foo : NSObject
+@interface Foo : NSObject {
+  int _myInt;
+}
 - (instancetype)init;
 
 - (int)returnNum:(int)x;

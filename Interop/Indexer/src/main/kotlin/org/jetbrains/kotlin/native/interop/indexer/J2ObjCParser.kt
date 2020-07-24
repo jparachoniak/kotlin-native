@@ -18,7 +18,6 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
 
   var className = ""
   val methodDescriptors = mutableListOf<MethodDescriptor>()
-  val fieldDescriptors = mutableListOf<FieldDescriptor>()
   val parameterNames = mutableListOf<List<String>>()
 
   override fun visit(version: Int,
@@ -31,15 +30,6 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
     super.visit(version, access, name, signature, superName, interfaces)
   }
 
-  override fun visitField(access: Int,
-                          name: String,
-                          descriptor: String,
-                          signature: String?,
-                          value: Any?): FieldVisitor? {
-    println(access.toString() + name + descriptor + signature + value.toString())
-    fieldDescriptors.add(FieldDescriptor(name, descriptor, access))
-    return super.visitField(access, name, descriptor, signature, value)
-  }
   override fun visitMethod(access: Int,
                            name: String,
                            descriptor: String,
@@ -58,7 +48,6 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
    */
   fun buildClass(): ObjCClass {
     val methods = (methodDescriptors zip parameterNames).map { buildClassMethod(it.first, it.second)}
-    val properties = fieldDescriptors.map { buildProperties(it) }
     val generatedClass = ObjCClassImpl(
       name = className,
       isForwardDeclaration = false,
@@ -72,9 +61,7 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
       isForwardDeclaration = false,
       location = Location(headerId = HeaderId("usr/include/objc/NSObject.h")) // TODO: When implementing inheritance check for proper base class.
     )
-    properties.map {generatedClass.properties.add(it.first)}
-    properties.map {generatedClass.methods.add(it.second)}
-    properties.map {generatedClass.methods.add(it.third)}
+    generatedClass.properties.addAll(parseForProperties(methods))
     return generatedClass
   }
 
@@ -119,36 +106,18 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
     }
   }
 
-  private fun buildProperties(fieldDescriptor: FieldDescriptor): Triple<ObjCProperty,ObjCMethod,ObjCMethod> {
-    val getter = ObjCMethod(
-      encoding = "[]",
-      isClass = false,
-      isExplicitlyDesignatedInitializer = false,
-      isInit = false,
-      isOptional = false,
-      isVariadic = false,
-      nsConsumesSelf = false,
-      nsReturnsRetained = false,
-      parameters = listOf(),
-      returnType = parseType(getType(fieldDescriptor.descriptor)),
-      selector = fieldDescriptor.name
-    )
-    val setter = ObjCMethod(
-      encoding = "[]",
-      isClass = false,
-      isExplicitlyDesignatedInitializer = false,
-      isInit = false,
-      isOptional = false,
-      isVariadic = false,
-      nsConsumesSelf = false,
-      nsReturnsRetained = false,
-      parameters = listOf<Parameter>(Parameter(name = fieldDescriptor.name, type = parseType(
-        getType(fieldDescriptor.descriptor)), nsConsumed = false)),
-      returnType = VoidType,
-      selector = "set${fieldDescriptor.name.capitalize()}:"
-    )
+  private fun parseForProperties(methods: List<ObjCMethod>): List<ObjCProperty> {
+    val getters = methods.filter{(it.selector.startsWith("get") || it.selector.startsWith("is")) && it.parameters.isEmpty()}
 
-    return Triple(ObjCProperty(fieldDescriptor.name, getter, setter), getter, setter)
+    return getters.map{
+      val varName = it.selector.substring(3)
+      val setter = methods.filter{it.selector.startsWith("set${varName}") && it.parameters.size == 1} // Feels like there's a better way to do this.
+      ObjCProperty(
+        getter = it,
+        name = varName.decapitalize(),
+        setter = if (setter.isEmpty()) null else setter.first() // Also feels wrong pt2.
+      )
+    }
   }
 
   /**
@@ -207,8 +176,6 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
 data class MethodDescriptor(val name: String, val descriptor: String, val access: Int) {
   val isConstructor: Boolean = (name == "<init>")
 }
-
-data class FieldDescriptor(val name: String, val descriptor: String, val access: Int)
 
 /**
  * Visits methods from J2ObjCParser and collects parameter names
