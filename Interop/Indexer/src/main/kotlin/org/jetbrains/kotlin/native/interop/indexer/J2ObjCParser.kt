@@ -2,13 +2,10 @@ package org.jetbrains.kotlin.native.interop.indexer
 
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
-import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type.getArgumentTypes
 import org.jetbrains.org.objectweb.asm.Type.getReturnType
-import org.jetbrains.org.objectweb.asm.Type.getType
-import java.util.jar.JarEntry
 import java.util.jar.JarFile
 
 /**
