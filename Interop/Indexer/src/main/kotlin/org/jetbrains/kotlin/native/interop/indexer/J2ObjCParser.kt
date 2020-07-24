@@ -103,8 +103,14 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
     }
   }
 
+  /**
+   * Parses the methods in the class to find getters/setters and generates properties accordingly
+   *
+   * @param methods List of ObjCMethods in the class
+   * @return List of ObjCPropertys based off of the getters/setters in class
+   */
   private fun parseForProperties(methods: List<ObjCMethod>): List<ObjCProperty> {
-    val getters = methods.filter{(it.selector.startsWith("get") || it.selector.startsWith("is")) && it.parameters.isEmpty()}
+    val getters = methods.filter{(it.selector.startsWith("get")) && it.parameters.isEmpty()}
 
     return getters.map{
       val varName = it.selector.substring(3)
