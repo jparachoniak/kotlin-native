@@ -13,11 +13,13 @@ private fun testMethods() {
 
   assertEquals(100, myObject.return100())
   assertEquals(43, myObject.returnNum(43))
+  assertEquals(47, myObject.add2(16,31))
+  assertEquals("Hello world!", myObject.returnString("Hello world!"))
 
   assertEquals(100, myExtensionObject.return100())
   assertEquals(-10, myExtensionObject.returnNum(-10))
-
-  assertEquals(47, myObject.add2(16,31))
+  assertEquals(-19, myExtensionObject.add2(-9,-10))
+  assertTrue(myExtensionObject.returnFoo() is j2objctest.Foo)
 
   // add2/add3 overridden to x-y/x-(y-z)
   assertEquals(-15, myExtensionObject.add2(16,31))
