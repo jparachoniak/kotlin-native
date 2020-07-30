@@ -107,16 +107,12 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
 
   private fun buildJ2objcMethodName(methodName: String, methodDesc: String): String {
     val outputMethodName = StringBuilder(methodName)
-
     val types = getArgumentTypes(methodDesc)
+
     if (types.size > 0) {
       outputMethodName.append("With" + types.get(0).className.capitalize() + ":")
     }
-
-    for (i in 1 until types.size) {
-      outputMethodName.append("with" + types.get(i).className.capitalize() + ":")
-    }
-
+    types.drop(1).forEach{outputMethodName.append("with" + it.className.capitalize() + ":")}
 
     return outputMethodName.toString()
   }

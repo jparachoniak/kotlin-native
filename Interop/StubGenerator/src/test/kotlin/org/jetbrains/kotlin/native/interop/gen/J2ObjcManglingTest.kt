@@ -40,10 +40,10 @@ class J2ObjcManglingTest {
   @Test
   fun `kotlin function name generated properly`() {
     val generated = parser.buildClass()
-    assertEquals("foo", generated.methods.get(0).j2objcName)
-    assertEquals("foo", generated.methods.get(1).j2objcName)
-    assertEquals("foo", generated.methods.get(2).j2objcName)
-    assertEquals("foo", generated.methods.get(3).j2objcName)
+    assertEquals("foo", generated.methods.get(0).nameOverride)
+    assertEquals("foo", generated.methods.get(1).nameOverride)
+    assertEquals("foo", generated.methods.get(2).nameOverride)
+    assertEquals("foo", generated.methods.get(3).nameOverride)
   }
 
 }
