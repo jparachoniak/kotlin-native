@@ -16,4 +16,7 @@ public class Foo implements FooInterface {
             return x;
         return fib(x-1) + fib(x-2);
     }
+    public int testKotlinInterface(FooInterface i, int num) {
+        return i.fib(num);
+    }
 }

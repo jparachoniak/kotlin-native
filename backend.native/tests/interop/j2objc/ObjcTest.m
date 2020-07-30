@@ -28,4 +28,8 @@
   }
   return [self fib:(n-1)] + [self fib:(n-2)];
 }
+
+- (int)testKotlinInterface:(id<FooInterface>)i num:(int)n{
+  return [i fib:(n)];
+}
 @end

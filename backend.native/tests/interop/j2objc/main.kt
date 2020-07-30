@@ -22,6 +22,7 @@ class implementsFooInterface: j2objctest.FooInterface, platform.darwin.NSObject(
 private fun testMethods() {
   val myObject = j2objctest.Foo()
   val myInterfaceObject = implementsFooInterface()
+
   assertEquals(100, myObject.return100())
   assertEquals(43, myObject.returnNum(43))
   assertEquals(47, myObject.add2(16,31))
@@ -29,6 +30,7 @@ private fun testMethods() {
   assertEquals(13, myObject.fib(7))
   assertEquals(13, testInterface(myObject, 7))
   assertEquals(13, myInterfaceObject.fib(7))
+  assertEquals(13, myObject.testKotlinInterface(myInterfaceObject,7))
 
   assertEquals(100, j2objctest.Foo.return100Static())
 }

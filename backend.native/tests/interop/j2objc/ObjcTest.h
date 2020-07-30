@@ -15,4 +15,5 @@
 - (int)return100;
 - (int)add2:(int)x secondparam:(int)y;
 + (int)return100Static;
+- (int)testKotlinInterface:(id<FooInterface>)i num:(int)n;
 @end
