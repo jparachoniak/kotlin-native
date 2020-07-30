@@ -48,7 +48,7 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
    *
    * @return An ObjCClass that matches a Java class
    */
-  fun buildClass(protocols: List<ObjCProtocol> = emptyList()): ObjCClass {
+  fun buildClass(): ObjCClass {
     val methods = (methodDescriptors zip parameterNames).map { buildClassMethod(it.first, it.second)}
 
     val generatedClass = ObjCClassImpl(
@@ -64,11 +64,11 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
       isForwardDeclaration = false,
       location = Location(headerId = HeaderId("usr/include/objc/NSObject.h")) // TODO: When implementing inheritance check for proper base class.
     )
-    if (interfaceNames.isNotEmpty()) {
-      for (interfaceName in interfaceNames) {
-        generatedClass.protocols.addAll(protocols.filter { it.name == interfaceName})
-      }
-    }
+    generatedClass.protocols.addAll(interfaceNames.map{ObjCProtocolImpl(
+      name = it,
+      isForwardDeclaration = false,
+      location = Location(HeaderId(""))
+    )})
     return generatedClass
   }
 
@@ -217,24 +217,14 @@ fun buildJ2ObjcNativeIndex(jarFiles: List<String>): IndexerResult {
   val j2objcClasses = mutableListOf<ObjCClass>()
   var j2objcProtocols = mutableListOf<ObjCProtocol>()
 
-  val protocolClasses = jarFile.entries().iterator().asSequence()
-    .filter{ it.name.endsWith(".class")}
-  for (classFile in protocolClasses)
-  {
+  jarFile.use {it.entries().iterator().asSequence().filter{it.name.endsWith(".class")}.forEach{
     val parser = J2ObjCParser()
-    ClassReader(jarFile.getInputStream(classFile).readBytes()).accept(parser,0)
+    ClassReader(jarFile.getInputStream(it).readBytes()).accept(parser, 0)
     if (parser.access and Opcodes.ACC_INTERFACE != 0)
       j2objcProtocols.add(parser.buildInterface())
-  }
-  val classClasses = jarFile.entries().iterator().asSequence()
-    .filter{ it.name.endsWith(".class")}
-  for (classFile in classClasses)
-  {
-    val parser = J2ObjCParser()
-    ClassReader(jarFile.getInputStream(classFile).readBytes()).accept(parser,0)
-    if (parser.access and Opcodes.ACC_INTERFACE == 0)
-      j2objcClasses.add(parser.buildClass(j2objcProtocols))
-  }
+    else
+      j2objcClasses.add(parser.buildClass())
+  }}
 
   return IndexerResult(J2ObjCNativeIndex(j2objcClasses,j2objcProtocols), CompilationWithPCH(emptyList<String>(), Language.J2ObjC))
 }
