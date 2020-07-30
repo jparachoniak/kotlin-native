@@ -44,7 +44,7 @@ private interface ObjCContainerImpl {
     val properties: MutableList<ObjCProperty>
 }
 
-private class ObjCProtocolImpl(
+class ObjCProtocolImpl(
         name: String,
         override val location: Location,
         override val isForwardDeclaration: Boolean

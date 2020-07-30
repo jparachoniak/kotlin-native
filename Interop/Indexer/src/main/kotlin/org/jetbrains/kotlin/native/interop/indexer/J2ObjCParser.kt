@@ -9,12 +9,16 @@ import org.jetbrains.org.objectweb.asm.Type.getReturnType
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 
+
+
 /**
  * Visits a Java class and builds an ObjCClass
  */
 class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
 
   var className = ""
+  var access = 0;
+  var interfaceNames = mutableListOf<String>()
   val methodDescriptors = mutableListOf<MethodDescriptor>()
   val parameterNames = mutableListOf<List<String>>()
 
@@ -23,8 +27,10 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
                      name: String,
                      signature: String?,
                      superName: String?,
-                     interfaces: Array<out String>?) {
+                     interfaces: Array<out String>) {
     className = name
+    this.access = access
+    interfaceNames.addAll(interfaces)
     super.visit(version, access, name, signature, superName, interfaces)
   }
 
@@ -44,7 +50,7 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
    *
    * @return An ObjCClass that matches a Java class
    */
-  fun buildClass(): ObjCClass {
+  fun buildClass(protocols: List<ObjCProtocol> = emptyList()): ObjCClass {
     val methods = (methodDescriptors zip parameterNames).map { buildClassMethod(it.first, it.second)}
 
     val generatedClass = ObjCClassImpl(
@@ -60,7 +66,29 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
       isForwardDeclaration = false,
       location = Location(headerId = HeaderId("usr/include/objc/NSObject.h")) // TODO: When implementing inheritance check for proper base class.
     )
+    if (interfaceNames.isNotEmpty()) {
+      for (interfaceName in interfaceNames) {
+        generatedClass.protocols.addAll(protocols.filter { it.name == interfaceName})
+      }
+    }
     return generatedClass
+  }
+
+  /**
+   * Creates an ObjCProtocol out of parsed Java interface
+   *
+   * @return Generated ObjCProtocol
+   */
+  fun buildInterface(): ObjCProtocol {
+    val methods = (methodDescriptors zip parameterNames).map { buildClassMethod(it.first, it.second)}
+
+    val generatedProtocol = ObjCProtocolImpl(
+      name = className,
+      isForwardDeclaration = false,
+      location = Location(HeaderId(""))
+    )
+    generatedProtocol.methods.addAll(methods)
+    return generatedProtocol
   }
 
   /**
@@ -188,13 +216,27 @@ private class MethodBuilder(val paramNames: MutableCollection<List<String>>): Me
 fun buildJ2ObjcNativeIndex(jarFiles: List<String>): IndexerResult {
   val jarFile = JarFile(jarFiles[0])
 
-  val j2objcClasses = jarFile.use { it.entries().iterator().asSequence()
-    .filter{ it.name.endsWith(".class")}.map {
-      val parser = J2ObjCParser()
-      ClassReader(jarFile.getInputStream(it).readBytes()).accept(parser,0)
-      parser.buildClass()
-    }.toList()
+  val j2objcClasses = mutableListOf<ObjCClass>()
+  var j2objcProtocols = mutableListOf<ObjCProtocol>()
+
+  val protocolClasses = jarFile.entries().iterator().asSequence()
+    .filter{ it.name.endsWith(".class")}
+  for (classFile in protocolClasses)
+  {
+    val parser = J2ObjCParser()
+    ClassReader(jarFile.getInputStream(classFile).readBytes()).accept(parser,0)
+    if (parser.access and Opcodes.ACC_INTERFACE != 0)
+      j2objcProtocols.add(parser.buildInterface())
+  }
+  val classClasses = jarFile.entries().iterator().asSequence()
+    .filter{ it.name.endsWith(".class")}
+  for (classFile in classClasses)
+  {
+    val parser = J2ObjCParser()
+    ClassReader(jarFile.getInputStream(classFile).readBytes()).accept(parser,0)
+    if (parser.access and Opcodes.ACC_INTERFACE == 0)
+      j2objcClasses.add(parser.buildClass(j2objcProtocols))
   }
 
-  return IndexerResult(J2ObjCNativeIndex(j2objcClasses), CompilationWithPCH(emptyList<String>(), Language.J2ObjC))
+  return IndexerResult(J2ObjCNativeIndex(j2objcClasses,j2objcProtocols), CompilationWithPCH(emptyList<String>(), Language.J2ObjC))
 }

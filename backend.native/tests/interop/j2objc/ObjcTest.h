@@ -2,7 +2,13 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Foo : NSObject
+@protocol FooInterface
+@required
+- (int)fib:(int)n;
+
+@end
+
+@interface Foo : NSObject <FooInterface>
 - (instancetype)init;
 
 - (int)returnNum:(int)x;
