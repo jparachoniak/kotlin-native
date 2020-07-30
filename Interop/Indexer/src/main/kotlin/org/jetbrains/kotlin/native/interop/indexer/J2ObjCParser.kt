@@ -9,8 +9,6 @@ import org.jetbrains.org.objectweb.asm.Type.getReturnType
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 
-
-
 /**
  * Visits a Java class and builds an ObjCClass
  */
