@@ -114,11 +114,11 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
 
     return getters.map{
       val varName = it.selector.substring(3)
-      val setter = methods.filter{it.selector.startsWith("set${varName}") && it.parameters.size == 1} // Feels like there's a better way to do this.
+      val setter = methods.find{it.selector.startsWith("set${varName}") && it.parameters.size == 1}
       ObjCProperty(
         getter = it,
         name = varName.decapitalize(),
-        setter = if (setter.isEmpty()) null else setter.first() // Also feels wrong pt2.
+        setter = setter
       )
     }
   }
