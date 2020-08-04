@@ -1,4 +1,5 @@
 #import "ObjcTest.h"
+static int _myStaticInt = 20;
 
 @implementation Foo
 
@@ -29,5 +30,13 @@
 
 - (void)setMyInt:(int)x {
     _myInt = x;
+}
+
+- (int)getMyStaticInt {
+    return _myStaticInt;
+}
+
+- (void)setMyStaticInt:(int)x {
+    _myStaticInt = x;
 }
 @end

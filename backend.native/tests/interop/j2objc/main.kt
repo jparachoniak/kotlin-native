@@ -9,13 +9,25 @@ fun main(args: Array<String>) {
 
 private fun testMethods() {
   val myObject = j2objctest.Foo()
+  val myObject2 = j2objctest.Foo()
+
   assertEquals(100, myObject.return100())
   assertEquals(43, myObject.returnNum(43))
   assertEquals(47, myObject.add2(16,31))
 
   assertEquals(10, myObject.myInt)
-  myObject.myInt = 20
-  assertEquals(20, myObject.myInt)
+  assertEquals(10, myObject2.myInt)
+  myObject.myInt = 4
+  assertEquals(4, myObject.myInt)
+  assertEquals(10, myObject2.myInt)
+
+  assertEquals(20, myObject.myStaticInt)
+  assertEquals(20, myObject2.myStaticInt)
+
+  myObject.myStaticInt = 30
+
+  assertEquals(30, myObject.myStaticInt)
+  assertEquals(30, myObject2.myStaticInt)
 
   assertEquals(100, j2objctest.Foo.return100Static())
 }
