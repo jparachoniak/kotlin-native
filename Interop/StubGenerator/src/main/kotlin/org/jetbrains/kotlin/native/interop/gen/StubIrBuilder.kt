@@ -257,7 +257,7 @@ class StubsBuildingContextImpl(
     override val wrapperComponentsBuilder = WrapperGenerationComponentsBuilder()
 
     override fun getKotlinClassFor(objCClassOrProtocol: ObjCClassOrProtocol, isMeta: Boolean): Classifier {
-        return declarationMapper.getKotlinClassFor(objCClassOrProtocol, isMeta, (nativeIndex is J2ObjCNativeIndex))
+        return declarationMapper.getKotlinClassFor(objCClassOrProtocol, isMeta, configuration.library.language == Language.J2ObjC)
     }
 
     override fun getKotlinClassForPointed(structDecl: StructDecl): Classifier {
