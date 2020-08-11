@@ -119,7 +119,7 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM7) {
     }
   }
 
-  private fun buildJ2objcMethodName(methodName: String, methodDesc: String, isConstructor: Boolean = false): String {
+  private fun buildJ2objcMethodName(methodName: String, methodDesc: String): String {
     val outputMethodName = StringBuilder(methodName)
     val typeNames = getArgumentTypes(methodDesc).map{
       if(it.className == "java.lang.String") "NSString" else

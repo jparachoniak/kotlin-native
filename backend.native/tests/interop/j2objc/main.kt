@@ -23,8 +23,8 @@ private fun testMethods() {
   assertEquals(100, myExtensionObject.return100())
   assertEquals(-10, myExtensionObject.returnNum(-10))
   assertEquals(1, myExtensionObject.add2(-9,-10))
-//  assertTrue(myExtensionObject.returnFoo() is j2objctest.ComTestFoo)
-assertEquals(10,10)
+  assertTrue(myExtensionObject.returnFoo() is j2objctest.Foo)
+
   assertEquals(6.0, innerClass.myInnerFunc(2.0, 3.0))
   assertEquals(6.0, nestedClass.myNestedFunc(3.0,2.0))
   // add2/add3 overridden to x-y/x-(y-z)
