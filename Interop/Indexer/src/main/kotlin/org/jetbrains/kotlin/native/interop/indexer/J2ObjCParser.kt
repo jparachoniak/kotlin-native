@@ -66,7 +66,7 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
     )
     generatedClass.protocols.addAll(interfaceNames.map{ObjCProtocolImpl(
       name = it,
-      isForwardDeclaration = false,
+      isForwardDeclaration = true,
       location = Location(HeaderId(""))
     )})
     return generatedClass
