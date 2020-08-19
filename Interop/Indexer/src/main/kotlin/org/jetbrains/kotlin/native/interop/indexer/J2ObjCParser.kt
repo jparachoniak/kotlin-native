@@ -201,7 +201,7 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM7) {
       )
       else -> ObjCObjectPointer(
         ObjCClassImpl(
-          name = if (isNestedClass) type.className.split('.').last() else buildJ2objcClassName(type.className,'.'),
+          name = type.className.split('.').last(),
           isForwardDeclaration = false,
           binaryName = null,
           location = Location(headerId = HeaderId(""))
