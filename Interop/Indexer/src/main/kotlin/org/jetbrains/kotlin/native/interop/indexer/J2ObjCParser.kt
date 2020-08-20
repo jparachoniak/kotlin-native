@@ -110,6 +110,7 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
    * TODO: and parses these to figure out what properties to create.
    *
    * @param methods List of ObjCMethods in the class
+   * @param containingClass ObjCClass that is being parsed for properties
    * @return List of ObjCProperty based off of the getters/setters in class
    */
   private fun parseForProperties(methods: List<ObjCMethod>, containingClass: ObjCClass): List<ObjCProperty> {
