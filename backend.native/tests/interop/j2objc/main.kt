@@ -21,13 +21,11 @@ private fun testMethods() {
   assertEquals(4, myObject.myInt)
   assertEquals(10, myObject2.myInt)
 
-  assertEquals(20, myObject.myStaticInt)
-  assertEquals(20, myObject2.myStaticInt)
-
-  myObject.myStaticInt = 30
-
-  assertEquals(30, myObject.myStaticInt)
-  assertEquals(30, myObject2.myStaticInt)
+  assertEquals(20, j2objctest.Foo.myStaticInt)
+  assertEquals(20, j2objctest.Foo.myStaticInt)
+  j2objctest.Foo.myStaticInt = 30
+  assertEquals(30, j2objctest.Foo.myStaticInt)
+  assertEquals(30, j2objctest.Foo.myStaticInt)
 
   assertEquals(100, j2objctest.Foo.return100Static())
 }

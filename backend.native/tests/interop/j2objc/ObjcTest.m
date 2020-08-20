@@ -32,11 +32,11 @@ static int _myStaticInt = 20;
     _myInt = x;
 }
 
-- (int)getMyStaticInt {
++ (int)getMyStaticInt {
     return _myStaticInt;
 }
 
-- (void)setMyStaticInt:(int)x {
++ (void)setMyStaticInt:(int)x {
     _myStaticInt = x;
 }
 @end

@@ -9,10 +9,10 @@ public class Foo {
         return myInt;
     }
 
-    public void setMyStaticInt(int x) {
+    public static void setMyStaticInt(int x) {
         myStaticInt = x;
     }
-    public int getMyStaticInt() {
+    public static int getMyStaticInt() {
         return myStaticInt;
     }
     public int add2(int firstparam, int secondparam) {

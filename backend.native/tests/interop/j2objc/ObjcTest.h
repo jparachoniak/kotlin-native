@@ -13,6 +13,6 @@
 + (int)return100Static;
 - (int)getMyInt;
 - (void)setMyInt:(int)x;
-- (int)getMyStaticInt;
-- (void)setMyStaticInt:(int)x;
++ (int)getMyStaticInt;
++ (void)setMyStaticInt:(int)x;
 @end
