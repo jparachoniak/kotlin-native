@@ -32,7 +32,7 @@ fun DeclarationMapper.isMappedToSigned(integerType: IntegerType): Boolean = inte
 fun DeclarationMapper.getKotlinClassFor(
         objCClassOrProtocol: ObjCClassOrProtocol,
         isMeta: Boolean = false,
-        isJ2ObjC: Boolean = false
+        useNameForProtocol: Boolean = false
 ): Classifier {
     val pkg = if (objCClassOrProtocol.isForwardDeclaration) {
         when (objCClassOrProtocol) {
@@ -42,7 +42,7 @@ fun DeclarationMapper.getKotlinClassFor(
     } else {
         this.getPackageFor(objCClassOrProtocol)
     }
-    val className = objCClassOrProtocol.kotlinClassName(isMeta, isJ2ObjC)
+    val className = objCClassOrProtocol.kotlinClassName(isMeta, useNameForProtocol)
     return Classifier.topLevel(pkg, className)
 }
 
