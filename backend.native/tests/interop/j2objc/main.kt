@@ -21,6 +21,7 @@ class implementsFooInterface: j2objctest.FooInterface, platform.darwin.NSObject(
 
 private fun testMethods() {
   val myObject = j2objctest.Foo()
+  val myObject2 = j2objctest.Foo()
   val myInterfaceObject = implementsFooInterface()
 
   val innerClass = j2objctest.Foo_InnerClass(myObject)
@@ -43,6 +44,19 @@ private fun testMethods() {
   assertEquals(13, myInterfaceObject.fib(7))
   assertEquals(13, myObject.testKotlinInterface(myInterfaceObject,7))
 
+  assertEquals(10, myObject.myInt)
+  assertEquals(10, myObject2.myInt)
+  myObject.myInt = 4
+  assertEquals(4, myObject.myInt)
+  assertEquals(10, myObject2.myInt)
+
+  assertEquals(20, j2objctest.Foo.myStaticInt)
+  assertEquals(20, j2objctest.Foo.myStaticInt)
+  j2objctest.Foo.myStaticInt = 30
+  assertEquals(30, j2objctest.Foo.myStaticInt)
+  assertEquals(30, j2objctest.Foo.myStaticInt)
+
+
   assertEquals(6.0, innerClass.myInnerFunc(2.0, 3.0))
   assertEquals(6.0, nestedClass.myNestedFunc(3.0,2.0))
   // add2/add3 overridden to x-y/x-(y-z)
@@ -52,6 +66,7 @@ private fun testMethods() {
 
   assertEquals(47, doAddTo(myObject, 16,31))
   assertEquals(-15, doAddTo(myExtensionObject, 16,31))
+
   assertEquals(100, j2objctest.Foo.return100Static())
 }
 

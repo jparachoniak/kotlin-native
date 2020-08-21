@@ -84,6 +84,7 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM7) {
         location = Location(headerId = HeaderId(""))
       )
     }
+    generatedClass.properties.addAll(parseForProperties(methods, generatedClass))
     return generatedClass
   }
 
@@ -161,6 +162,40 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM7) {
 
   private fun buildJ2objcClassName(className: String, delimiter: Char): String {
     return className.split(delimiter).reduce{ acc, string -> acc.capitalize() + string.capitalize()}
+  }
+
+  /**
+   * Parses the methods in the class to find getters/setters and generates properties accordingly
+   *
+   * TODO: This is a very simple and fragile check, the source java class must have the getters/setters/is methods defined
+   * TODO: and parses these to figure out what properties to create.
+   *
+   * @param methods List of ObjCMethods in the class
+   * @param containingClass ObjCClass that is being parsed for properties
+   * @return List of ObjCProperty based off of the getters/setters in class
+   */
+  private fun parseForProperties(methods: List<ObjCMethod>, containingClass: ObjCClass): List<ObjCProperty> {
+    val getters =
+      methods.filter {
+        ((it.selector.startsWith("get")) || ((it.selector.startsWith("is")) && it.getReturnType(
+          containingClass) == ObjCBoolType)) && it.parameters.isEmpty() && it.getReturnType(containingClass) != VoidType
+      }
+
+    return getters.map{ getter ->
+      val varName = getter.selector.substring(3)
+      val setter = methods.find { setter ->
+        setter.selector.startsWith("set${varName}")
+        && setter.parameters.size == 1
+        && setter.getReturnType(containingClass) == VoidType
+        && (getter.getReturnType(containingClass) == setter.parameters.get(0).type)
+        && getter.isClass == setter.isClass // Checks if getter is static, then setter must be static
+      }
+      ObjCProperty(
+        getter = getter,
+        name = varName.decapitalize(),
+        setter = setter
+      )
+    }
   }
 
   /**
