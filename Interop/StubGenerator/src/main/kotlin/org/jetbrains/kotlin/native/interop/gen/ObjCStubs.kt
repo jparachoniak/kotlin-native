@@ -587,12 +587,11 @@ private class ObjCPropertyStubBuilder(
     }
 }
 
-fun ObjCClassOrProtocol.kotlinClassName(isMeta: Boolean): String {
+fun ObjCClassOrProtocol.kotlinClassName(isMeta: Boolean, useNameForProtocol: Boolean = false): String {
     val baseClassName = when (this) {
         is ObjCClass -> this.name
-        is ObjCProtocol -> "${this.name}Protocol"
+        is ObjCProtocol -> if (useNameForProtocol) this.name else "${this.name}Protocol"
     }
-
     return if (isMeta) "${baseClassName}Meta" else baseClassName
 }
 

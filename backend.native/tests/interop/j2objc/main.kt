@@ -7,8 +7,21 @@ fun main(args: Array<String>) {
   }
 }
 
+fun testInterface(i: j2objctest.FooInterface, n: Int): Int {
+  return i.fib(n)
+}
+
+class implementsFooInterface: j2objctest.FooInterface, platform.darwin.NSObject() {
+  override fun fib(n: Int): Int {
+    if (n == 0 || n == 1)
+      return n
+    return fib(n-1) + fib(n-2)
+  }
+}
+
 private fun testMethods() {
   val myObject = j2objctest.Foo()
+  val myInterfaceObject = implementsFooInterface()
 
   val innerClass = j2objctest.Foo_InnerClass(myObject)
   val nestedClass = j2objctest.Foo_NestedClass()
@@ -24,6 +37,11 @@ private fun testMethods() {
   assertEquals(-10, myExtensionObject.returnNum(-10))
   assertEquals(1, myExtensionObject.add2(-9,-10))
   assertTrue(myExtensionObject.returnFoo() is j2objctest.Foo)
+
+  assertEquals(13, myObject.fib(7))
+  assertEquals(13, testInterface(myObject, 7))
+  assertEquals(13, myInterfaceObject.fib(7))
+  assertEquals(13, myObject.testKotlinInterface(myInterfaceObject,7))
 
   assertEquals(6.0, innerClass.myInnerFunc(2.0, 3.0))
   assertEquals(6.0, nestedClass.myNestedFunc(3.0,2.0))
