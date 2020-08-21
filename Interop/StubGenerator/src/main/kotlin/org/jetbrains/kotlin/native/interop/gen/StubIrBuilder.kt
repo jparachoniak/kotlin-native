@@ -208,6 +208,9 @@ class StubsBuildingContextImpl(
                 KotlinPlatform.JVM -> false
                 KotlinPlatform.NATIVE -> true
             }
+
+        override val useNameForProtocol: Boolean
+            get() = (configuration.library.language == Language.J2ObjC)
     }
 
     override val macroConstantsByName: Map<String, MacroDef> =
@@ -257,7 +260,7 @@ class StubsBuildingContextImpl(
     override val wrapperComponentsBuilder = WrapperGenerationComponentsBuilder()
 
     override fun getKotlinClassFor(objCClassOrProtocol: ObjCClassOrProtocol, isMeta: Boolean): Classifier {
-        return declarationMapper.getKotlinClassFor(objCClassOrProtocol, isMeta, configuration.library.language == Language.J2ObjC)
+        return declarationMapper.getKotlinClassFor(objCClassOrProtocol, isMeta)
     }
 
     override fun getKotlinClassForPointed(structDecl: StructDecl): Classifier {

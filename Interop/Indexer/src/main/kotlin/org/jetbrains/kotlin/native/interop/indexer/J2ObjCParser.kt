@@ -65,7 +65,7 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM7) {
     )
     generatedClass.methods.addAll(methods)
     generatedClass.protocols.addAll(interfaceNames.map{ObjCProtocolImpl(
-      name = it,
+      name = buildJ2objcClassName(it,'/'),
       isForwardDeclaration = true,
       location = Location(HeaderId(""))
     )})
@@ -97,7 +97,7 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM7) {
     val methods = (methodDescriptors zip parameterNames).map { buildClassMethod(it.first, it.second)}
 
     val generatedProtocol = ObjCProtocolImpl(
-      name = className,
+      name = buildJ2objcClassName(className,'/'),
       isForwardDeclaration = false,
       location = Location(HeaderId(""))
     )
@@ -260,7 +260,14 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM7) {
         ObjCPointer.Nullability.valueOf("Unspecified"),
         listOf()
       )
-      else -> ObjCObjectPointer(
+      else -> if (interfaceNames.contains(type.internalName))
+        ObjCIdType(nullability = ObjCPointer.Nullability.valueOf("Unspecified"),
+                   protocols = listOf<ObjCProtocol>(
+                     ObjCProtocolImpl(isForwardDeclaration = false,
+                                      location = Location(headerId = HeaderId("")),
+                                      name = buildJ2objcClassName(type.className,'.')
+                     )))
+      else ObjCObjectPointer(
         ObjCClassImpl(
           name = type.className.split('.').last(),
           isForwardDeclaration = false,
