@@ -6,18 +6,18 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type.getArgumentTypes
 import org.jetbrains.org.objectweb.asm.Type.getReturnType
-import java.util.jar.JarEntry
 import java.util.jar.JarFile
 
 /**
  * Visits a Java class and builds an ObjCClass
  */
-class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
+class J2ObjCParser: ClassVisitor(Opcodes.ASM7) {
 
   var className = ""
   var superName = ""
   val methodDescriptors = mutableListOf<MethodDescriptor>()
   val parameterNames = mutableListOf<List<String>>()
+  var isNestedClass = false
 
   override fun visit(version: Int,
                      access: Int,
@@ -41,19 +41,22 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
     return methodBuilder
   }
 
+  override fun visitNestHost(nestHost: String?) {
+    isNestedClass = (nestHost != null)
+    super.visitNestHost(nestHost)
+  }
+
   /**
    * Generates an ObjCClass out of data collected while visiting
    *
    * @return An ObjCClass that matches a Java class
    */
   fun buildClass(): ObjCClass {
-    val methods = (methodDescriptors zip parameterNames).map { buildClassMethod(it.first.first, it.first.second, it.first.third, it.second)}
-    val packageClassName = buildJ2objcClassName()
-
+    val methods = (methodDescriptors zip parameterNames).map { buildClassMethod(it.first, it.second)}
     val generatedClass = ObjCClassImpl(
-      name = packageClassName,
+      name = if (isNestedClass) className.split('/').last().replace('$', '_') else className.split('/').last(),
       isForwardDeclaration = false,
-      binaryName = null,
+      binaryName = buildJ2objcClassName(className,'/').replace('$', '_'),
       location = Location(HeaderId("")) // Leaving headerId empty for now.
     )
     generatedClass.methods.addAll(methods)
@@ -66,8 +69,8 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
       )
     } else {
       generatedClass.baseClass = ObjCClassImpl(
-        name = superName,
-        binaryName = null,
+        name = superName.split('/').last(),
+        binaryName = buildJ2objcClassName(superName, '/'),
         isForwardDeclaration = false,
         location = Location(headerId = HeaderId(""))
       )
@@ -83,11 +86,12 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
    * @return An ObjCMethod built from the descriptor
    */
   private fun buildClassMethod(methodDescriptor: MethodDescriptor, paramNames: List<String>): ObjCMethod {
+    val methodParameters = parseMethodParameters(methodDescriptor.descriptor, paramNames)
     if (methodDescriptor.isConstructor) {
       return ObjCMethod(
-        selector = "init",
+        selector = buildJ2objcMethodName("init", methodDescriptor.descriptor),
         encoding = "[]",
-        parameters = listOf<Parameter>(), // TODO: Support constructor arguments.
+        parameters = methodParameters,
         returnType = ObjCInstanceType(nullability = ObjCPointer.Nullability.Unspecified),
         isVariadic = false,
         isClass = false,
@@ -97,9 +101,8 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
         isInit = true,
         isExplicitlyDesignatedInitializer = false)
     } else {
-      val selector = buildJ2objcMethodName(methodName, methodDesc)
-      val methodParameters = parseMethodParameters(methodDesc, paramNames)
-      val methodReturnType = parseMethodReturnType(methodDesc)
+      val selector = buildJ2objcMethodName(methodDescriptor.name, methodDescriptor.descriptor)
+      val methodReturnType = parseMethodReturnType(methodDescriptor.descriptor)
       return ObjCMethod(
         selector = selector,
         encoding = "[]", //TODO: Implement encoding properly
@@ -118,18 +121,20 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
 
   private fun buildJ2objcMethodName(methodName: String, methodDesc: String): String {
     val outputMethodName = StringBuilder(methodName)
-    val types = getArgumentTypes(methodDesc)
+    val typeNames = getArgumentTypes(methodDesc).map{
+      if(it.className == "java.lang.String") "NSString" else
+        if (it.className == "java.lang.Number") "NSNumber"  else
+          buildJ2objcClassName(it.className,'.').capitalize()}
 
-    if (types.size > 0) {
-      outputMethodName.append("With" + types.get(0).className.capitalize() + ":")
+    if (typeNames.size > 0) {
+      outputMethodName.append("With" + typeNames.get(0) + ":")
     }
-    types.drop(1).forEach{outputMethodName.append("with" + it.className.capitalize() + ":")}
-
+    typeNames.drop(1).forEach{outputMethodName.append("with" + it + ":")}
     return outputMethodName.toString()
   }
 
-  private fun buildJ2objcClassName(): String {
-    return className.split('/').reduce{ acc, string -> acc.capitalize() + string}
+  private fun buildJ2objcClassName(className: String, delimiter: Char): String {
+    return className.split(delimiter).reduce{ acc, string -> acc.capitalize() + string.capitalize()}
   }
 
   /**
@@ -142,9 +147,8 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
 
   private fun parseMethodParameters(methodDesc: String, paramNames: List<String>): List<Parameter> {
     val parameterTypes = getArgumentTypes(methodDesc)
-
     return parameterTypes.mapIndexed { i, paramType ->
-      Parameter(name = paramNames.get(i), type = parseType(parameterTypes.get(i)), nsConsumed = false)
+      Parameter(name = paramNames.get(i), type = parseType(paramType), nsConsumed = false)
     }
   }
 
@@ -197,7 +201,7 @@ class J2ObjCParser: ClassVisitor(Opcodes.ASM5) {
       )
       else -> ObjCObjectPointer(
         ObjCClassImpl(
-          name = type.className,
+          name = type.className.split('.').last(),
           isForwardDeclaration = false,
           binaryName = null,
           location = Location(headerId = HeaderId(""))
@@ -219,7 +223,7 @@ data class MethodDescriptor(val name: String, val descriptor: String, val access
  *
  * @param paramNames List of parameter name strings to be added to
  */
-private class MethodBuilder(val paramNames: MutableCollection<List<String>>): MethodVisitor(Opcodes.ASM5) {
+private class MethodBuilder(val paramNames: MutableCollection<List<String>>): MethodVisitor(Opcodes.ASM7) {
   val params = mutableListOf<String>()
 
   override fun visitParameter(name: String, access: Int) {
