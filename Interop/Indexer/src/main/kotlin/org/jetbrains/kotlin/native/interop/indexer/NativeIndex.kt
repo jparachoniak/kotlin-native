@@ -116,7 +116,7 @@ abstract class NativeIndex {
  * @param classes List of ObjCClass parsed from a Java file
  */
 
-class J2ObjCNativeIndex(val classes:Collection<ObjCClass>) : NativeIndex() {
+class J2ObjCNativeIndex(val classes:Collection<ObjCClass>, val protocols:Collection<ObjCProtocol>) : NativeIndex() {
     override val structs: Collection<StructDecl>
         get() = emptyList<StructDecl>()
     override val enums: Collection<EnumDef>
@@ -124,7 +124,7 @@ class J2ObjCNativeIndex(val classes:Collection<ObjCClass>) : NativeIndex() {
     override val objCClasses: Collection<ObjCClass>
         get() = classes
     override val objCProtocols: Collection<ObjCProtocol>
-        get() = emptyList<ObjCProtocol>()
+        get() = protocols
     override val objCCategories: Collection<ObjCCategory>
         get() = emptyList<ObjCCategory>()
     override val typedefs: Collection<TypedefDef>
@@ -226,7 +226,8 @@ sealed class ObjCClassOrProtocol(val name: String) : ObjCContainer(), TypeDeclar
 data class ObjCMethod(
         val selector: String, val encoding: String, val parameters: List<Parameter>, private val returnType: Type,
         val isVariadic: Boolean, val isClass: Boolean, val nsConsumesSelf: Boolean, val nsReturnsRetained: Boolean,
-        val isOptional: Boolean, val isInit: Boolean, val isExplicitlyDesignatedInitializer: Boolean
+        val isOptional: Boolean, val isInit: Boolean, val isExplicitlyDesignatedInitializer: Boolean,
+        val nameOverride: String? = null
 ) {
 
     fun returnsInstancetype(): Boolean = returnType is ObjCInstanceType

@@ -106,7 +106,7 @@ private class ObjCMethodStubBuilder(
     private val kotlinMethodParameters: List<FunctionParameterStub>
     private val external: Boolean
     private val receiver: ReceiverParameterStub?
-    private val name: String = method.kotlinName
+    private val name: String = method.nameOverride ?: method.kotlinName
     private val origin = StubOrigin.ObjCMethod(method, container)
     private val modality: MemberStubModality
     private val isOverride: Boolean =
@@ -587,12 +587,11 @@ private class ObjCPropertyStubBuilder(
     }
 }
 
-fun ObjCClassOrProtocol.kotlinClassName(isMeta: Boolean): String {
+fun ObjCClassOrProtocol.kotlinClassName(isMeta: Boolean, useNameForProtocol: Boolean = false): String {
     val baseClassName = when (this) {
         is ObjCClass -> this.name
-        is ObjCProtocol -> "${this.name}Protocol"
+        is ObjCProtocol -> if (useNameForProtocol) this.name else "${this.name}Protocol"
     }
-
     return if (isMeta) "${baseClassName}Meta" else baseClassName
 }
 

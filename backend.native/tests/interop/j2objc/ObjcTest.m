@@ -24,6 +24,7 @@ static int _myStaticInt = 20;
     return 100;
 }
 
+
 - (int)getMyInt {
     return _myInt;
 }
@@ -38,5 +39,16 @@ static int _myStaticInt = 20;
 
 + (void)setMyStaticInt:(int)x {
     _myStaticInt = x;
+
+- (int)fib:(int)n {
+  if (n == 0 || n == 1){
+    return n;
+  }
+  return [self fib:(n-1)] + [self fib:(n-2)];
+}
+
+- (int)testKotlinInterface:(id<FooInterface>)i num:(int)n{
+  return [i fib:(n)];
+
 }
 @end
