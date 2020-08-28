@@ -4,7 +4,10 @@
 //
 
 #include "J2ObjC_source.h"
-#include "com/test/Foo.h"
+#include "Foo.h"
+#include "FooInterface.h"
+
+jint ComTestFoo_myStaticInt = 20;
 
 @implementation ComTestFoo
 
@@ -14,6 +17,22 @@ J2OBJC_IGNORE_DESIGNATED_BEGIN
   return self;
 }
 J2OBJC_IGNORE_DESIGNATED_END
+
+- (void)setMyIntWithInt:(jint)x {
+  myInt_ = x;
+}
+
+- (jint)getMyInt {
+  return myInt_;
+}
+
++ (void)setMyStaticIntWithInt:(jint)x {
+  ComTestFoo_setMyStaticIntWithInt_(x);
+}
+
++ (jint)getMyStaticInt {
+  return ComTestFoo_getMyStaticInt();
+}
 
 - (jint)add2WithInt:(jint)firstparam
             withInt:(jint)secondparam {
@@ -36,27 +55,53 @@ J2OBJC_IGNORE_DESIGNATED_END
   return ComTestFoo_return100Static();
 }
 
+- (jint)fibWithInt:(jint)x {
+  if (x == 0 || x == 1) return x;
+  return [self fibWithInt:x - 1] + [self fibWithInt:x - 2];
+}
+
+- (jint)testKotlinInterfaceWithComTestFooInterface:(id<ComTestFooInterface>)i
+                                           withInt:(jint)num {
+  return [((id<ComTestFooInterface>) nil_chk(i)) fibWithInt:num];
+}
+
 + (const J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {
     { NULL, NULL, 0x1, -1, -1, -1, -1, -1, -1 },
-    { NULL, "I", 0x1, 0, 1, -1, -1, -1, -1 },
-    { NULL, "I", 0x1, 2, 3, -1, -1, -1, -1 },
+    { NULL, "V", 0x1, 0, 1, -1, -1, -1, -1 },
     { NULL, "I", 0x1, -1, -1, -1, -1, -1, -1 },
-    { NULL, "LNSString;", 0x1, 4, 5, -1, -1, -1, -1 },
+    { NULL, "V", 0x9, 2, 1, -1, -1, -1, -1 },
     { NULL, "I", 0x9, -1, -1, -1, -1, -1, -1 },
+    { NULL, "I", 0x1, 3, 4, -1, -1, -1, -1 },
+    { NULL, "I", 0x1, 5, 1, -1, -1, -1, -1 },
+    { NULL, "I", 0x1, -1, -1, -1, -1, -1, -1 },
+    { NULL, "LNSString;", 0x1, 6, 7, -1, -1, -1, -1 },
+    { NULL, "I", 0x9, -1, -1, -1, -1, -1, -1 },
+    { NULL, "I", 0x1, 8, 1, -1, -1, -1, -1 },
+    { NULL, "I", 0x1, 9, 10, -1, -1, -1, -1 },
   };
   #pragma clang diagnostic push
   #pragma clang diagnostic ignored "-Wobjc-multiple-method-names"
   #pragma clang diagnostic ignored "-Wundeclared-selector"
   methods[0].selector = @selector(init);
-  methods[1].selector = @selector(add2WithInt:withInt:);
-  methods[2].selector = @selector(returnNumWithInt:);
-  methods[3].selector = @selector(return100);
-  methods[4].selector = @selector(returnStringWithNSString:);
-  methods[5].selector = @selector(return100Static);
+  methods[1].selector = @selector(setMyIntWithInt:);
+  methods[2].selector = @selector(getMyInt);
+  methods[3].selector = @selector(setMyStaticIntWithInt:);
+  methods[4].selector = @selector(getMyStaticInt);
+  methods[5].selector = @selector(add2WithInt:withInt:);
+  methods[6].selector = @selector(returnNumWithInt:);
+  methods[7].selector = @selector(return100);
+  methods[8].selector = @selector(returnStringWithNSString:);
+  methods[9].selector = @selector(return100Static);
+  methods[10].selector = @selector(fibWithInt:);
+  methods[11].selector = @selector(testKotlinInterfaceWithComTestFooInterface:withInt:);
   #pragma clang diagnostic pop
-  static const void *ptrTable[] = { "add2", "II", "returnNum", "I", "returnString", "LNSString;", "LComTestFoo_InnerClass;LComTestFoo_NestedClass;" };
-  static const J2ObjcClassInfo _ComTestFoo = { "Foo", "com.test", ptrTable, methods, NULL, 7, 0x1, 6, 0, -1, 6, -1, -1, -1 };
+  static const J2ObjcFieldInfo fields[] = {
+    { "myInt_", "I", .constantValue.asLong = 0, 0x1, -1, -1, -1, -1 },
+    { "myStaticInt", "I", .constantValue.asLong = 0, 0x9, -1, 11, -1, -1 },
+  };
+  static const void *ptrTable[] = { "setMyInt", "I", "setMyStaticInt", "add2", "II", "returnNum", "returnString", "LNSString;", "fib", "testKotlinInterface", "LComTestFooInterface;I", &ComTestFoo_myStaticInt, "LComTestFoo_InnerClass;LComTestFoo_NestedClass;" };
+  static const J2ObjcClassInfo _ComTestFoo = { "Foo", "com.test", ptrTable, methods, fields, 7, 0x1, 12, 2, -1, 12, -1, -1, -1 };
   return &_ComTestFoo;
 }
 
@@ -64,6 +109,7 @@ J2OBJC_IGNORE_DESIGNATED_END
 
 void ComTestFoo_init(ComTestFoo *self) {
   NSObject_init(self);
+  self->myInt_ = 10;
 }
 
 ComTestFoo *new_ComTestFoo_init() {
@@ -72,6 +118,16 @@ ComTestFoo *new_ComTestFoo_init() {
 
 ComTestFoo *create_ComTestFoo_init() {
   J2OBJC_CREATE_IMPL(ComTestFoo, init)
+}
+
+void ComTestFoo_setMyStaticIntWithInt_(jint x) {
+  ComTestFoo_initialize();
+  ComTestFoo_myStaticInt = x;
+}
+
+jint ComTestFoo_getMyStaticInt() {
+  ComTestFoo_initialize();
+  return ComTestFoo_myStaticInt;
 }
 
 jint ComTestFoo_return100Static() {

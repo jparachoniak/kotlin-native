@@ -25,6 +25,8 @@ interface DeclarationMapper {
     fun getPackageFor(declaration: TypeDeclaration): String
 
     val useUnsignedTypes: Boolean
+    val useNameForProtocol: Boolean
+        get() = true
 }
 
 fun DeclarationMapper.isMappedToSigned(integerType: IntegerType): Boolean = integerType.isSigned || !useUnsignedTypes
@@ -32,7 +34,6 @@ fun DeclarationMapper.isMappedToSigned(integerType: IntegerType): Boolean = inte
 fun DeclarationMapper.getKotlinClassFor(
         objCClassOrProtocol: ObjCClassOrProtocol,
         isMeta: Boolean = false,
-        useNameForProtocol: Boolean = false
 ): Classifier {
     val pkg = if (objCClassOrProtocol.isForwardDeclaration) {
         when (objCClassOrProtocol) {

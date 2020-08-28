@@ -2,3 +2,4 @@ language = J2ObjC
 package = j2objctest
 linkerOpts = -lj2objctest
 j2objcJar = interop/j2objc/Foo.jar
+headers = /Users/odowa/Code/kotlin-native/backend.native/tests/interop/j2objc/com/test/ExtendsFoo.h /Users/odowa/Code/kotlin-native/backend.native/tests/interop/j2objc/com/test/Foo.h /Users/odowa/Code/kotlin-native/backend.native/tests/interop/j2objc/com/test/FooInterface.h

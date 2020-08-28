@@ -41,7 +41,7 @@ public class Foo implements FooInterface{
     }
     public int testKotlinInterface(FooInterface i, int num) {
         return i.fib(num);
-
+    }
 
     // TODO: Add fields to this test after PR is merged
     class InnerClass{
@@ -54,6 +54,5 @@ public class Foo implements FooInterface{
         double myNestedFunc(double a, double b) {
             return a * b;
         }
-
     }
 }

@@ -16,7 +16,14 @@
 #if !defined (ComTestFoo_) && (INCLUDE_ALL_ComTestFoo || defined(INCLUDE_ComTestFoo))
 #define ComTestFoo_
 
-@interface ComTestFoo : NSObject
+#define RESTRICT_ComTestFooInterface 1
+#define INCLUDE_ComTestFooInterface 1
+#include "FooInterface.h"
+
+@interface ComTestFoo : NSObject < ComTestFooInterface > {
+ @public
+  jint myInt_;
+}
 
 #pragma mark Public
 
@@ -24,6 +31,12 @@
 
 - (jint)add2WithInt:(jint)firstparam
             withInt:(jint)secondparam;
+
+- (jint)fibWithInt:(jint)x;
+
+- (jint)getMyInt;
+
++ (jint)getMyStaticInt;
 
 - (jint)return100;
 
@@ -33,15 +46,33 @@
 
 - (NSString *)returnStringWithNSString:(NSString *)s;
 
+- (void)setMyIntWithInt:(jint)x;
+
++ (void)setMyStaticIntWithInt:(jint)x;
+
+- (jint)testKotlinInterfaceWithComTestFooInterface:(id<ComTestFooInterface>)i
+                                           withInt:(jint)num;
+
 @end
 
 J2OBJC_EMPTY_STATIC_INIT(ComTestFoo)
+
+inline jint ComTestFoo_get_myStaticInt(void);
+inline jint ComTestFoo_set_myStaticInt(jint value);
+inline jint *ComTestFoo_getRef_myStaticInt(void);
+/*! INTERNAL ONLY - Use accessor function from above. */
+FOUNDATION_EXPORT jint ComTestFoo_myStaticInt;
+J2OBJC_STATIC_FIELD_PRIMITIVE(ComTestFoo, myStaticInt, jint)
 
 FOUNDATION_EXPORT void ComTestFoo_init(ComTestFoo *self);
 
 FOUNDATION_EXPORT ComTestFoo *new_ComTestFoo_init(void) NS_RETURNS_RETAINED;
 
 FOUNDATION_EXPORT ComTestFoo *create_ComTestFoo_init(void);
+
+FOUNDATION_EXPORT void ComTestFoo_setMyStaticIntWithInt_(jint x);
+
+FOUNDATION_EXPORT jint ComTestFoo_getMyStaticInt(void);
 
 FOUNDATION_EXPORT jint ComTestFoo_return100Static(void);
 

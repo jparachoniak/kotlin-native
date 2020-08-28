@@ -4,8 +4,8 @@
 //
 
 #include "J2ObjC_source.h"
-#include "com/test/ExtendsFoo.h"
-#include "com/test/Foo.h"
+#include "ExtendsFoo.h"
+#include "Foo.h"
 
 @implementation ComTestExtendsFoo
 
